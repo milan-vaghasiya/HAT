@@ -1,0 +1,51 @@
+{
+    "name": "AKSHARAPP",
+    "short_name": "AKSHARAPP",
+	"id":"akshar_app",
+    "start_url": "https://akshar.scubeerp.in/app/",
+    "display": "standalone",
+    "scope" : "https://akshar.scubeerp.in/app/",
+    "background_color": "#FFFFFF",
+    "theme_color": "#FFFFFF",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "https://akshar.scubeerp.in/assets/app/img/icon/72.png",
+            "type": "image/png",
+            "sizes": "72x72"
+        },
+        {
+            "src": "https://akshar.scubeerp.in/assets/app/img/icon/96.png",
+            "type": "image/png",
+            "sizes": "96x96"
+        },
+        {
+            "src": "https://akshar.scubeerp.in/assets/app/img/icon/144.png",
+            "type": "image/png",
+            "sizes": "144x144"
+        },
+        {
+            "src": "https://akshar.scubeerp.in/assets/app/img/icon/192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "https://akshar.scubeerp.in/assets/app/img/icon/512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+	"description": "AKSHAR ENGINEERS",
+	"screenshots": [
+		{
+		  "src": "https://akshar.scubeerp.in/assets/app/img/icon/sc1.png",
+		  "type": "image/png",
+		  "sizes": "485x888"
+		},
+		{
+		  "src": "https://akshar.scubeerp.in/assets/app/img/icon/sc2.png",
+		  "type": "image/png",
+		  "sizes": "478x891"
+		}
+	]
+}

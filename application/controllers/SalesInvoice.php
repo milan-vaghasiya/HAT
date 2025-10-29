@@ -5,6 +5,7 @@ class SalesInvoice extends MY_Controller{
 	private $itemwiseInvoice = "sales_invoice/itemwise_invoice";
     private $invoiceForm = "sales_invoice/form";
 	private $tc_index = "sales_invoice/tc_index";
+	private $packingSlipForm = "sales_invoice/packing_slip_form";
     private $gstPercentage = Array(["rate"=>0,"val"=>'NIL'],["rate"=>0.1,"val"=>'0.1%'],["rate"=>0.25,"val"=>'0.25%'],["rate"=>3,"val"=>'3%'],["rate"=>5,"val"=>'5%'],["rate"=>12,"val"=>'12%'],["rate"=>18,"val"=>'18%'],["rate"=>28,"val"=>'28%']);
 	
 	public function __construct(){ 
@@ -1439,6 +1440,13 @@ class SalesInvoice extends MY_Controller{
         endforeach;        
         $result['data'] = $sendData;
         $this->printJson($result);
+    }
+
+	public function addPackingSlip(){
+		$data = $this->input->post();
+		
+		$this->data['itemData'] = $this->salesInvoice->salesTransactions($data['id']);
+        $this->load->view($this->packingSlipForm,$this->data);
     }
 }
 ?>

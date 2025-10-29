@@ -392,9 +392,13 @@ function getSalesInvoiceData($data){
     }
     $tcPrint = '';//'<a href="'.base_url($data->controller.'/printTestReport/'.$data->id).'" class="btn btn-primary btn-edit permission-modify" datatip="Print Test Certificate" flow="down" target="_blank"><i class="fa fa-print"></i></a>';
     
+    $packingParam = "{'id' : ".$data->id.", 'modal_id' : 'modal-xl', 'form_id' : 'packingForm', 'title' : 'Packing Slip', fnEdit:'addPackingSlip' }";
+
+    $packingSlip = '<a class="btn btn-primary permission-approve btn-edit" href="javascript:void(0)" datatip="Add Packing Slip" flow="down" onclick="edit('.$packingParam.');"><i class="fa fa-file-alt" ></i></a>'; 
+
     if($data->listType == 'LISTING')
     {
-        $action = getActionButton($tcPrint.$printCustom.$printExport.$print.$edit.$delete);
+        $action = getActionButton($packingSlip.$tcPrint.$printCustom.$printExport.$print.$edit.$delete);
     	if($data->tp == 'BILLWISE')
     	{
     		return [$action,$data->sr_no,$data->trans_number,date("d-m-Y",strtotime($data->trans_date)),$data->party_name,$data->taxable_amount,$data->gst_amount,$data->net_amount];

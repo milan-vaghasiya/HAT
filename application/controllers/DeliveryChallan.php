@@ -644,7 +644,7 @@ class DeliveryChallan extends MY_Controller{
 		$invType = array("ORIGINAL","DUPLICATE","TRIPLICATE","EXTRA COPY");$i=0;
 		foreach($invType as $it)
 		{
-			$invoiceType[$i++]='<table style="margin-bottom:5px;">
+			$invoiceType[$i++]='<br><br><table style="margin-bottom:5px;">
 									<tr>
 										<th style="width:35%;letter-spacing:2px;" class="text-left fs-17" >GSTIN: '.$companyData->company_gst_no.'</th>
 										<th style="width:30%;letter-spacing:2px;" class="text-center fs-17">DELIVERY CHALLAN</th>
@@ -854,5 +854,222 @@ class DeliveryChallan extends MY_Controller{
         $mpdf->WriteHTML($pdfData);
         $mpdf->Output($pdfFileName,'I');
     }
+
+	/*Created By Milan v @29-10-2025*/
+	public function dispatch_advise_pdf($id = ''){		
+		$sales_id = $id;
+		$salesData = $this->challan->getChallan($sales_id);
+		$companyData = $this->challan->getCompanyInfo();
+
+		$letter_head=base_url('assets/images/letterhead_top.png');
+
+		$logoFile=(!empty($companyData->company_logo)) ? $companyData->company_logo : 'logo.png';
+		$logo=base_url('assets/images/'.$logoFile);
+		
+		$subTotal=$salesData->taxable_amount;
+		$itemList='<table class="table table-bordered poItemList">
+					<thead><tr class="text-center">
+						<th style="width:6%;">Sr.No.</th>
+						<th class="text-left">Product No.</th>
+						<th style="width:10%;">Act. Ball Size</th>
+						<th style="width:10%;">Grade</th>
+						<th style="width:10%;">Heat No.</th>
+						<th style="width:10%;">P.O NO.</th>
+						<th style="width:10%;">P.O Dt.</th>
+						<th style="width:15%;">Mat. Recd. Dt.</th>
+						<th style="width:10%;">Sign. (Disp. Dept.)</th>
+						<th style="width:10%;">Sign. (Sales Dept.)</th>
+						<th style="width:10%;">Qty</th>
+						
+					</tr></thead><tbody>';
+		
+		// Terms & Conditions		
+		$blankLines=10; $blankLines=10;
+		$terms = '<table class="table">';$t=0;$tc=new StdClass;		
+		if(!empty($salesData->terms_conditions))
+		{
+			$tc=json_decode($salesData->terms_conditions);
+			$blankLines=17 - count($tc);
+			foreach($tc as $trms):
+				if($t==0):
+					$terms .= '<tr>
+									<th style="width:17%;font-size:12px;text-align:left;">'.$trms->term_title.'</th>
+									<td style="width:48%;font-size:12px;">: '.$trms->condition.'</td>
+									<th rowspan="'.count($tc).'" style="width:35%;vertical-align:bottom;text-align:center;font-size:1rem;padding:5px 2px;">
+										For, '.$companyData->company_name.'<br>
+									</th>
+							</tr>';
+				else:
+					$terms .= '<tr>
+								<th style="font-size:12px;text-align:left;">'.$trms->term_title.'</th>
+								<td style="font-size:12px;">: '.$trms->condition.'</td>
+							</tr>';
+				endif;$t++;
+			endforeach;
+		}
+		else
+		{
+			$tc = array();
+			$terms .= '<tr>
+							<td style="width:65%;font-size:12px;">Subject to RAJKOT Jurisdiction</td>
+							<th rowspan="'.count($tc).'" style="width:35%;vertical-align:bottom;text-align:center;font-size:1rem;padding:5px 2px;">
+								For, '.$companyData->company_name.'<br>
+							</th>
+					</tr>';
+		}
+		
+		$terms .= '</table>';
+		
+		$subTotal=0;$lastPageItems = '';$pageCount = 0;
+		$i=1;$total_qty=0;$page_qty = 0;$page_amount = 0;
+		$pageData = array();$totalPage = 0;
+		$totalItems = count($salesData->itemData);
+		
+		$lpr = $blankLines ;$pr1 = $blankLines + 6 ;
+		$pageRow = $pr = ($totalItems > $lpr) ? $pr1 : $totalItems;
+		$lastPageRow = (($totalItems % $lpr)==0) ? $lpr : ($totalItems % $lpr);
+		$remainRow = $totalItems - $lastPageRow;
+		$pageSection = round(($remainRow/$pageRow),2);
+		$totalPage = (numberOfDecimals($pageSection)==0)? (int)$pageSection : (int)$pageSection + 1;
+		for($x=0;$x<=$totalPage;$x++)
+		{
+			$page_qty = 0;$page_amount = 0;
+			$pageItems = '';$pr = ($x==$totalPage) ? $totalItems - ($i-1) : $pr;
+			$tempData = $this->challan->getChallanTransactions($sales_id,$pr.','.$pageCount);
+			
+			if(!empty($tempData))
+			{
+				foreach ($tempData as $row)   
+				{
+					$pageItems.='<tr>';
+						$pageItems.='<td class="text-center" height="37">'.$i.'</td>';
+						$pageItems.='<td class="text-left">'.$row->item_code.'</td>';
+						$pageItems.='<td class="text-left">'.$row->item_name.'</td>';
+						$pageItems.='<td class="text-center">'.$row->material_grade.'</td>';
+						$pageItems.='<td class="text-center">'.$row->batch_no.'</td>';
+						$pageItems.='<td class="text-center">'.$row->doc_no.'</td>';
+						$pageItems.='<td class="text-center">'.formatDate($row->doc_date).'</td>';
+						$pageItems.='<td class="text-center"></td>';
+						$pageItems.='<td class="text-center"></td>';
+						$pageItems.='<td class="text-center"></td>';
+						$pageItems.='<td class="text-center">'.sprintf('%0.2f', $row->qty).'</td>';
+					$pageItems.='</tr>';
+					
+					$total_qty += $row->qty;$page_qty += $row->qty;$page_amount += $row->amount;$subTotal += $row->amount;$i++;
+				}
+			}
+			if($x==$totalPage)
+			{
+				$pageData[$x]= '';
+				$lastPageItems = $pageItems;
+			}
+			else
+			{
+				$pageData[$x]=$itemList.$pageItems.'</tbody></table><div class="text-right"><i>Continue to Next Page</i></div>';
+			}
+			$pageCount += $pageRow;
+		}
+		
+		$party_gstin = (!empty($salesData->party_state_code)) ? explode('#',$salesData->party_state_code)[0] : '';
+		$party_stateCode = (!empty($salesData->party_state_code)) ? explode('#',$salesData->party_state_code)[1] : '';
+		
+		if(!empty($party_gstin))
+		{
+			if($party_stateCode!="24")
+			{
+				$gstRow='<tr>';
+					$gstRow.='<td colspan="3" class="text-right" style="border-top:0px !important;border-right:1px solid #000;">IGST</td>';
+					$gstRow.='<td class="text-right" style="border-top:0px !important;">'.sprintf('%0.2f', ($salesData->cgst_amount + $salesData->sgst_amount + $salesData->freight_gst)).'</td>';
+				$gstRow.='</tr>';
+			}
+		}
+
+		$itemList .= $lastPageItems;
+		if($i<$blankLines)
+		{
+			for($z=$i;$z<=$blankLines;$z++)
+			{$itemList.='<tr><td  height="37">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';}
+		}
+		
+		$itemList.='<tr>';
+			$itemList.='<td colspan="10" class="text-right" style="vartical-align:top;border-top:1px solid #000;border-right:1px solid #000;"><b>Total Qty</b></td>';
+			$itemList.='<th class="text-right" style="border:1px solid #000;border-left:0px solid #000;">'.sprintf('%0.2f', $total_qty).'</th>';
+			
+		$itemList.='</tr>';
+		$itemList.='<tbody></table>';
+		
+		$pageData[$totalPage] .= $itemList;
+		$pageData[$totalPage] .= '<br><b><u>Terms & Conditions : </u></b><br>'.$terms.'';
+
+		$invoiceType = '<br><br><table style="margin-bottom:5px;">
+								<tr>
+									<th style="width:35%;letter-spacing:2px;" class="text-left fs-17" >GSTIN: '.$companyData->company_gst_no.'</th>
+									<th style="width:30%;letter-spacing:2px;" class="text-center fs-17">DISPATCH ADVISE</th>
+									<th style="width:35%;letter-spacing:2px;" class="text-right"></th>
+								</tr>
+							</table>';
+		
+		$baseDetail='<table class="poTopTable" style="margin-bottom:5px;">
+						<tr>
+							<td style="width:55%;" rowspan="3">
+								<table>
+									<tr><td style="vartical-align:top;"><b>CHALLAN TO</b></td></tr>
+									<tr><td style="vertical-align:top;"><b>'.$salesData->party_name.'</b></td></tr>
+									<tr><td class="text-left" style="">'.$salesData->billing_address.'</td></tr>
+									<tr><td class="text-left" style=""><b>GSTIN : '.$party_gstin.'</b></td></tr>
+								</table>
+							</td>
+							<td style="width:25%;border-bottom:1px solid #000000;border-right:0px;padding:2px;">
+								<b>Challan No. : '.$salesData->trans_prefix.$salesData->trans_no.'</b>
+							</td>
+							<td style="width:20%;border-bottom:1px solid #000000;border-left:0px;text-align:right;padding:2px 5px;">
+								<b>Date : '.date('d/m/Y', strtotime($salesData->trans_date)).'</b>
+							</td>
+						</tr>
+						<tr>
+							<td style="width:45%;" colspan="2">
+								<table>
+									<tr><td style="vertical-align:top;"><b>P.O. No.</b></td><td>: '.$salesData->doc_no.'</td></tr>
+									
+									<tr><td style="vertical-align:top;"><b>Transport</b></td><td>: '.$salesData->transport_name.'</td></tr>
+									<tr><td style="vertical-align:top;"><b>Lr. No.</b></td><td>: '.$salesData->lr_no.'</td></tr>
+									<tr><td style="vertical-align:top;"><b>No. of Packages</b></td><td>: '.$salesData->total_packet.'</td></tr>
+									<tr><td style="vertical-align:top;"><b>Total Weight</b></td><td>: '.$salesData->net_weight.'</td></tr>
+								</table>
+							</td>
+						</tr>
+					</table>';
+				
+		$htmlHeader = '<img src="'.$letter_head.'">';
+		$htmlFooter = '<table class="table top-table" style="margin-top:10px;border-top:1px solid #545454;">
+						<tr>
+							<td style="width:25%;font-size:12px;">CHALLAN No. & Date : '.$salesData->trans_prefix.$salesData->trans_no.'-'.formatDate($salesData->trans_date).'</td>
+							<td style="width:25%;font-size:12px;"></td>
+							<td style="width:25%;text-align:right;font-size:12px;">Page No. {PAGENO}/{nbpg}</td>
+						</tr>
+					</table>';
+		
+		$mpdf = $this->m_pdf->load();
+		$i=1;
+
+		$pdfFileName = 'Dispatch-advise.pdf';
+		
+		$stylesheet = file_get_contents(base_url('assets/css/bill_style.css'));
+		$mpdf->WriteHTML($stylesheet,1);
+		$mpdf->SetDisplayMode('fullpage');
+		
+		$mpdf->SetWatermarkImage($logo,0.05,array(120,60));
+		$mpdf->showWatermarkImage = true;
+		$mpdf->SetHTMLHeader($htmlHeader);
+		$mpdf->SetHTMLFooter($htmlFooter);
+
+		foreach($pageData as $pg)
+		{
+			$mpdf->AddPage('P','','','','',7,7,38,7,4,6);
+			$mpdf->WriteHTML('<div style="position:relative;"><div class="poDiv1">'.$invoiceType.$baseDetail.$pg.'</div></div>');
+		}
+		
+		$mpdf->Output($pdfFileName,'I');
+	}
 }
 ?>

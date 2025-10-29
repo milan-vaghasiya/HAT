@@ -348,6 +348,9 @@ function getDeliveryChallanData($data){
         $edit = '<a href="'.base_url($data->controller.'/edit/'.$data->trans_main_id).'" class="btn btn-success btn-edit permission-modify" datatip="Edit" flow="down"><i class="fa fa-edit"></i></a>';
         $delete = '<a href="javascript:void(0)" class="btn btn-danger btn-delete permission-remove" onclick="trash('.$deleteParam.');" datatip="Remove" flow="down"><i class="ti-trash"></i></a>';
     endif;
+
+    $advisePrintBtn = '<a class="btn btn-dribbble btn-edit" href="'.base_url($data->controller.'/dispatch_advise_pdf/'.$data->trans_main_id).'" target="_blank" datatip="Print Dispatch Advise" flow="down"><i class="fas fa-print" ></i></a>';
+
     if($data->party_id == 5):
         $backPrint = '<a class="btn btn-danger btn-edit" href="'.base_url('deliveryChallan/back_pdf_forBhavani/'.$data->trans_main_id).'" target="_blank" datatip="Back Print" flow="down"><i class="fas fa-print" ></i></a>';
 
@@ -356,7 +359,7 @@ function getDeliveryChallanData($data){
         $printBtn = '<a href="javascript:void(0)" class="btn btn-warning btn-edit printInvoice" datatip="Print Delivery Challan" flow="down" data-id="'.$data->trans_main_id.'" data-function="challan_pdf"><i class="fa fa-print"></i></a>';
     endif;
     $itemList = '<a href="javascript:void(0)" class="btn btn-primary createItemList permission-read" data-id="'.$data->trans_main_id.'" data-party_name="'.$data->party_name.'" datatip="Item List" flow="down"><i class="fa fa-list" ></i></a>';
-    $action = getActionButton($printBtn.$backPrint.$invoice.$itemList.$edit.$delete);
+    $action = getActionButton($advisePrintBtn.$printBtn.$backPrint.$invoice.$itemList.$edit.$delete);
     return [$action,$data->sr_no,getPrefixNumber($data->trans_prefix,$data->trans_no),formatDate($data->trans_date),$data->party_code,$data->inv_no];
 }
 

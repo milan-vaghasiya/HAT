@@ -7,6 +7,7 @@ class SalesInvoiceModel extends MasterModel{
     private $transMain = "trans_main";
     private $transChild = "trans_child";
     private $packingTrans = "packing_transaction";
+    private $packingSlipDetails = "packing_slip_details";
     
     /** As Per Shining **/
     public function getDTRows($data){ 
@@ -748,5 +749,113 @@ class SalesInvoiceModel extends MasterModel{
     }
 
     //------ API Code End -------//
+
+    /*
+        Created by milan v(30-10-2025)
+    */
+
+    public function getPackingSlip($id){ 
+        $queryData = array();   
+        $queryData['tableName'] = $this->transMain;
+        $queryData['select'] = 'trans_main.*';
+        $queryData['where']['trans_main.id'] = $id;
+        $invoiceData = $this->row($queryData);
+        $invoiceData->itemData = $this->getPackingSlipItems($id);
+
+        return $invoiceData;
+    }
+
+    public function packingSlipTransactions($id){
+        $queryData['tableName'] = $this->packingSlipDetails;
+        $queryData['select'] = "id,IFNULL(SUM(qty),0) as total_added_qty";
+        $queryData['where']['inv_trans_id'] = $id;
+
+        return $this->row($queryData);
+    }
+
+    public function savePackingSlipItem($data){
+        try{
+            $this->db->trans_begin();
+
+            if(!empty($data['inv_id'])){
+                $checkQty = $this->packingSlipTransactions($data['inv_trans_id']);
+                $data['total_qty'] = intval($data['total_qty']);
+                $remainingQty = $data['total_qty'] - $checkQty->total_added_qty;
+
+                if($data['qty'] > $remainingQty){
+                    $message_text = 'You can only add a maximum of '.$remainingQty.' quantity';
+                    if($remainingQty == 0){
+                        $message_text = 'You cannot add this item. the total quantity of '.$data['total_qty'].' has already been reached.';
+                    }
+                    $result = ['status' => 2, 'message' => $message_text];
+                }
+                else{                    
+                    unset($data['total_qty']);
+                    $this->store($this->packingSlipDetails,$data);            
+
+                    $result = ['status'=>1,'message'=>'Added successfully.'];
+                }
+            }else{
+                $result = ['status'=>2,'message'=>'Invoice not selected.'];
+            }
+
+            if ($this->db->trans_status() !== FALSE){
+                $this->db->trans_commit();
+                return $result;
+            }
+        }catch(\Exception $e){
+            $this->db->trans_rollback();
+            return ['status'=>2,'message'=>"somthing is wrong. Error : ".$e->getMessage()];
+        }	
+    }
+
+    public function getPackingSlipItems($id){        
+        $queryData['tableName'] = $this->packingSlipDetails;
+        $queryData['select'] = "packing_slip_details.*,item_master.item_name,item_master.item_code,item_master.material_grade,item_master.description,item_master.drawing_no";
+        $queryData['join']['item_master'] = "item_master.id = packing_slip_details.item_id";
+        $queryData['where']['packing_slip_details.inv_id'] = $id;
+
+        $result = $this->rows($queryData);
+        return $result;
+    }
+
+    public function getPackingSlipItemList($id){        
+        $resultData = $this->getPackingSlipItems($id);
+        
+        $html="";
+        if(!empty($resultData)):
+            $i=1;
+            foreach($resultData as $row):   
+                $deleteParam = $row->id.",'Packing Item'";
+
+                $html .= '<tr>
+                            <td class="text-center">'.$i.'</td>
+                            <td class="text-center">'.$row->wooden_box_no.'</td>
+                            <td class="text-center">'.$row->item_name.'</td>
+                            <td class="text-center">'.$row->qty.'</td>
+                            <td class="text-center"><a href="javascript:void(0)" class="btn btn-danger btn-delete" onclick="trashItem('.$deleteParam.');" datatip="Remove" flow="down"><i class="ti-trash"></i></a></td>
+                        </tr>';
+                $i++;
+            endforeach;
+        else:
+            $html = '<tr><td class="text-center" colspan="5">No Data Found</td></tr>';
+        endif;
+        return ['status'=>1,'htmlData'=>$html];
+    }
+
+    public function deletePackingSlipItem($id){
+        try{
+            $this->db->trans_begin();
+            $result = $this->trash($this->packingSlipDetails,['id' => $id],'Item');
+
+            if ($this->db->trans_status() !== FALSE):
+                $this->db->trans_commit();
+                return $result;
+            endif;
+        }catch(\Exception $e){
+            $this->db->trans_rollback();
+            return ['status'=>2,'message'=>"somthing is wrong. Error : ".$e->getMessage()];
+        }	
+    }
 }
 ?>

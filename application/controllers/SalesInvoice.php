@@ -1651,7 +1651,7 @@ class SalesInvoice extends MY_Controller{
 							</td>
 						</tr>
 						<tr>
-							<td><b>Date : '.date('d/m/Y').'</b></td>
+							<td><b>Packing Date : '.date('d/m/Y').'</b></td>
 						</tr>
 						<tr><td style="vertical-align:top;"><b>P.O. No.</b>: '.$salesData->doc_no.'</td></tr>
 									

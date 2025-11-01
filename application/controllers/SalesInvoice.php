@@ -1492,203 +1492,46 @@ class SalesInvoice extends MY_Controller{
 		endif;
 	}
 
-	public function packing_slip_pdf($id = ''){		
-		$sales_id = $id;
-		$salesData = $this->salesInvoice->getPackingSlip($id);
-		$companyData = $this->challan->getCompanyInfo();
+	public function packing_slip_pdf($id = ''){	
+		$this->data['salesData'] = $salesData = $this->salesInvoice->getPackingSlip($id);
+		$this->data['companyData'] = $this->challan->getCompanyInfo();
 
 		$letter_head=base_url('assets/images/letterhead_top.png');
 
 		$logoFile=(!empty($companyData->company_logo)) ? $companyData->company_logo : 'logo.png';
 		$logo=base_url('assets/images/'.$logoFile);
-		
-		$itemList='<table class="table item-list-bb">
-					<thead><tr class="text-center">
-						<th style="width:6%;">Wooden Box No.</th>
-						<th class="text-left">H.A.T. Product No.</th>
-						<th style="width:10%;">Invoice No. </th>
-						<th style="width:10%;">Invoice Date </th>
-						<th style="width:10%;">P.O NO.</th>
-						<th style="width:10%;">P.O Dt.</th>
 
-						<th style="width:10%;">Item </th>
-						<th style="width:10%;">Drawing No.</th>
-						<th style="width:15%;">Description</th>
-						<th style="width:10%;">Grade</th>
-						<th style="width:10%;">Qty</th>
-						
-					</tr></thead><tbody>';
+		$this->data['party_gstin'] = (!empty($salesData->party_state_code)) ? explode('#',$salesData->party_state_code)[0] : '';
+		$this->data['tempData'] = $this->salesInvoice->getPackingSlipItems($id);
 		
-		// Terms & Conditions		
-		$blankLines=10;
-		$terms = '<table class="table ">';$tc=new StdClass;	
-		$tc = array();
-		$terms .= '<tr>
-					<td style="width:65%;font-size:12px;"></td>
-					<th rowspan="'.count($tc).'" style="width:35%;vertical-align:bottom;text-align:center;font-size:1rem;padding:5px 2px;">
-						For, '.$companyData->company_name.'<br>
-					</th>
-			</tr>';
-		
-		$terms .= '</table>';
-		
-		$lastPageItems = '';$pageCount = 0;
-		$i=1;$total_qty=0;
-		$pageData = array();$totalPage = 0;
-		$totalItems = !empty($salesData) ? count($salesData->itemData) : 0;
-		
-		$lpr = $blankLines ;
-		$pr1 = $blankLines + 1 ;
-		$pageRow = $pr = ($totalItems > $lpr) ? $pr1 : $totalItems;
-		$lastPageRow = (($totalItems % $lpr)==0) ? $lpr : ($totalItems % $lpr);
-		$remainRow = $totalItems - $lastPageRow;
-		$pageSection = round(($remainRow/$pageRow),2);
-		$totalPage = (numberOfDecimals($pageSection)==0)? (int)$pageSection : (int)$pageSection + 1;
-		
-		$x = 0;
-		$pageItems = '';$pr = ($x==$totalPage) ? $totalItems - ($i-1) : $pr;
-		$tempData = $this->salesInvoice->getPackingSlipItems($sales_id);
-		
-		if(!empty($tempData))
-		{
-			$item_records = [];
-			foreach ($tempData as $row)   
-			{	
-				$item_records[$row->wooden_box_no][] = $row;
-			}
-			if (!empty($item_records)) {
-				foreach ($item_records as $key => $main_row) {
-					$rowspan = count($main_row); 
-					$firstRow = true; 
+		$letter_head=base_url('assets/images/letterhead_top.png');
+		$logo=base_url('assets/images/logo.png'); base_url('assets/images/unapproved.jpg');
 
-					foreach ($main_row as $row) {
-						$pageItems .= '<tr>';
+		$pdfData = $this->load->view('sales_invoice/print_packing_details',$this->data,true);	
 
-						if ($firstRow) {
-							$pageItems .= '<td class="text-center" height="37" rowspan="'.$rowspan.'">'.$key.'</td>';
-							$firstRow = false; 
-						}
-
-						$pageItems .= '<td class="text-left">'.$row->item_code.'</td>';
-						$pageItems .= '<td class="text-left">'.$salesData->trans_number.'</td>';
-						$pageItems .= '<td class="text-center">'.formatDate($salesData->trans_date).'</td>';
-						$pageItems .= '<td class="text-center">'.$salesData->doc_no.'</td>';
-						$pageItems .= '<td class="text-center">'.formatDate($salesData->doc_date).'</td>';
-						$pageItems .= '<td class="text-left">'.$row->item_name.'</td>';
-						$pageItems .= '<td class="text-left">'.$row->drawing_no.'</td>';
-						$pageItems .= '<td class="text-center">'.$row->description.'</td>';
-						$pageItems .= '<td class="text-center">'.$row->material_grade.'</td>';
-						$pageItems .= '<td class="text-center">'.sprintf('%0.2f', $row->qty).'</td>';
-
-						$pageItems .= '</tr>';
-
-						$total_qty += $row->qty;
-					}
-				}
-			}
-		}
-		
-		if($x==$totalPage)
-		{
-			$pageData[$x]= '';
-			$lastPageItems = $pageItems;
-		}
-		else
-		{
-			$pageData[$x]=$itemList.$pageItems.'</tbody></table><div class="text-right"><i>Continue to Next Page</i></div>';
-		}
-		$pageCount += $pageRow;
-
-		$party_gstin = (!empty($salesData->party_state_code)) ? explode('#',$salesData->party_state_code)[0] : '';
-		$party_stateCode = (!empty($salesData->party_state_code)) ? explode('#',$salesData->party_state_code)[1] : '';
-		
-		if(!empty($party_gstin))
-		{
-			if($party_stateCode!="24")
-			{
-				$gstRow='<tr>';
-					$gstRow.='<td colspan="3" class="text-right" style="border-top:0px !important;border-right:1px solid #000;">IGST</td>';
-					$gstRow.='<td class="text-right" style="border-top:0px !important;">'.sprintf('%0.2f', ($salesData->cgst_amount + $salesData->sgst_amount + $salesData->freight_gst)).'</td>';
-				$gstRow.='</tr>';
-			}
-		}
-
-		$itemList .= $lastPageItems;
-		if($i<$blankLines)
-		{
-			for($z=$i;$z<=$blankLines;$z++)
-			{$itemList.='<tr><td  height="37">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';}
-		}
-		
-		$itemList.='<tr>';
-			$itemList.='<td colspan="10" class="text-right" style="vartical-align:top;border-top:1px solid #000;border-right:1px solid #000;"><b>Total Qty</b></td>';
-			$itemList.='<th class="text-right" style="border:1px solid #000;border-left:0px solid #000;">'.sprintf('%0.2f', $total_qty).'</th>';
-			
-		$itemList.='</tr>';
-		$itemList.='<tbody></table>';
-		
-		$pageData[$totalPage] .= $itemList;
-		$pageData[$totalPage] .= '<br><br>'.$terms.'';
-
-		$invoiceType = '<br><br><table style="margin-bottom:5px;">
-								<tr>
-									<th style="width:35%;letter-spacing:2px;" class="text-left fs-17" >GSTIN: '.$companyData->company_gst_no.'</th>
-									<th style="width:30%;letter-spacing:2px;" class="text-center fs-17">PACKING DETAILS</th>
-									<th style="width:35%;letter-spacing:2px;" class="text-right"></th>
-								</tr>
-							</table>';
-		
-		$baseDetail='<table class="table top-table" style="margin-bottom:5px;border:1px solid">
+		$htmlHeader = '<img src="'.$letter_head.'">';		
+		$htmlFooter = '<table class="table top-table" style="margin-top:10px;border-top:1px solid #545454;">
 						<tr>
-							<td rowspan="7" style="width:50%;border-right:1px solid; vertical-align: top;">
-								<b>INVOICE TO</b><br>
-								<b>'.$salesData->party_name.'</b><br>
-								'.$salesData->billing_address.'<br>
-								<b>GSTIN : '.$party_gstin.'</b>
-							</td>
-							<td style="width:50%;">
-								<b>Invoice No. : '.$salesData->trans_prefix.$salesData->trans_no.'</b>
-							</td>
-						</tr>
-						<tr>
-							<td><b>Packing Date : '.date('d/m/Y').'</b></td>
-						</tr>
-						<tr><td style="vertical-align:top;"><b>P.O. No.</b>: '.$salesData->doc_no.'</td></tr>
-									
-						<tr><td style="vertical-align:top;"><b>Transport</b>: '.$salesData->transport_name.'</td></tr>
-						<tr><td style="vertical-align:top;"><b>Lr. No.</b>: '.$salesData->lr_no.'</td></tr>
-						<tr><td style="vertical-align:top;"><b>No. of Packages</b>: '.$salesData->total_packet.'</td></tr>
-						<tr><td style="vertical-align:top;"><b>Total Weight</b>: '.$salesData->net_weight.'</td></tr>
-					</table>';
-				
-		$htmlHeader = '<img src="'.$letter_head.'">';
-		$htmlFooter = '<table class="table top-table-bordered" style="margin-top:10px;border-top:1px solid #545454;">
-						<tr>
-							<td style="width:25%;font-size:12px;">INVOICE No. & Date : '.$salesData->doc_no.' '.formatDate($salesData->doc_date).'</td>
+							<td style="width:25%;font-size:12px;">INVOICE No. & Date : '.$salesData->trans_prefix.$salesData->trans_no.' '.formatDate($salesData->doc_date).'</td>
 							<td style="width:25%;font-size:12px;"></td>
 							<td style="width:25%;text-align:right;font-size:12px;">Page No. {PAGENO}/{nbpg}</td>
 						</tr>
 					</table>';
 		
 		$mpdf = $this->m_pdf->load();
-		$i=1;
-
-		$pdfFileName = 'Packing-slip.pdf';
+		$pdfFileName = 'Packing-details.pdf';
 		
 		$stylesheet = file_get_contents(base_url('assets/css/pdf_style.css'));
 		$mpdf->WriteHTML($stylesheet,1);
 		$mpdf->SetDisplayMode('fullpage');
-		
-		$mpdf->SetWatermarkImage($logo,0.05,array(120,60));
+
+		$mpdf->SetWatermarkImage($logo,0.05,array(100,100));
 		$mpdf->showWatermarkImage = true;
+
 		$mpdf->SetHTMLHeader($htmlHeader);
 		$mpdf->SetHTMLFooter($htmlFooter);
-
-		foreach($pageData as $pg)
-		{
-			$mpdf->AddPage('P','','','','',7,7,38,7,4,6);
-			$mpdf->WriteHTML('<div style="position:relative;"><div class="poDiv1">'.$invoiceType.$baseDetail.$pg.'</div></div>');
-		}
+		$mpdf->AddPage('P','','','','',5,5,45,32,5,5,'','','','','','','','','','A4-P');
+		$mpdf->WriteHTML($pdfData);
 		
 		$mpdf->Output($pdfFileName,'I');
 	}

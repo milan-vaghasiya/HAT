@@ -271,7 +271,7 @@ class PreDispatchInspect extends MY_Controller
 		
 		$mpdf->SetHTMLHeader($htmlHeader);
 		$mpdf->SetHTMLFooter($htmlFooter);
-		$mpdf->AddPage('P','','','','',5,5,40,25,5,5,'','','','','','','','','','A4-P');
+		$mpdf->AddPage('P','','','','',5,5,50,25,5,75,'','','','','','','','','','A4-P');
 		$mpdf->WriteHTML($pdfData);
 		$mpdf->Output($pdfFileName,'I');		
 	}

@@ -505,7 +505,7 @@ class ProformaInvoice extends MY_Controller{
 			{
 				if(!empty($header_footer))
 				{
-					$mpdf->AddPage('P','','','','',7,7,38,7,4,6);
+					$mpdf->AddPage('P','','','','',7,7,50,7,4,6);
 					$mpdf->WriteHTML('<div style="position:relative;"><div class="poDiv1">'.$invoiceType[0].$baseDetail.$pg.'</div></div>');
 				}
 				else
@@ -522,12 +522,12 @@ class ProformaInvoice extends MY_Controller{
 			{
 				if(!empty($header_footer))
 				{
-					$mpdf->AddPage('P','','','','',0,0,33,3,3,0);
+					$mpdf->AddPage('P','','','','',0,0,50,3,3,0);
 					$mpdf->WriteHTML('<div style="position:relative;"><div class="poDiv">'.$invoiceType[1].$baseDetail.$pg.'</div></div>');
 				}
 				else
 				{
-					$mpdf->AddPage('P','','','','',0,0,33,3,3,0);
+					$mpdf->AddPage('P','','','','',0,0,50,3,3,0);
 					$mpdf->WriteHTML('<div style="position:relative;"><div class="poDiv">'.$invoiceType[1].$baseDetail.$pg.'</div></div>');
 				}
 			}
@@ -539,12 +539,12 @@ class ProformaInvoice extends MY_Controller{
 			{
 				if(!empty($header_footer))
 				{
-					$mpdf->AddPage('P','','','','',0,0,33,3,3,0);
+					$mpdf->AddPage('P','','','','',0,0,50,3,3,0);
 					$mpdf->WriteHTML('<div style="position:relative;"><div class="poDiv">'.$invoiceType[2].$baseDetail.$pg.'</div></div>');
 				}
 				else
 				{
-					$mpdf->AddPage('P','','','','',0,0,33,3,3,0);
+					$mpdf->AddPage('P','','','','',0,0,50,3,3,0);
 					$mpdf->WriteHTML('<div style="position:relative;"><div class="poDiv">'.$invoiceType[2].$baseDetail.$pg.'</div></div>');
 				}
 			}
@@ -556,12 +556,12 @@ class ProformaInvoice extends MY_Controller{
 			{
 				if(!empty($header_footer))
 				{
-					$mpdf->AddPage('P','','','','',0,0,33,3,3,0);
+					$mpdf->AddPage('P','','','','',0,0,50,3,3,0);
 					$mpdf->WriteHTML('<div style="position:relative;"><div class="poDiv">'.$invoiceType[3].$baseDetail.$pg.'</div></div>');
 				}
 				else
 				{
-					$mpdf->AddPage('P','','','','',0,0,33,3,3,0);
+					$mpdf->AddPage('P','','','','',0,0,50,3,3,0);
 					$mpdf->WriteHTML('<div style="position:relative;"><div class="poDiv">'.$invoiceType[3].$baseDetail.$pg.'</div></div>');
 				}
 			}

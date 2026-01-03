@@ -1194,12 +1194,13 @@ class ProcessMovementModel extends MasterModel
             $jobData = $this->jobcard->getJobcard($bomData->job_card_id);
 
             /*** Update Cut Weight in JOB BOM ***/
+            $total_out_qty = (!empty($aprvData->total_out_qty)) ? $aprvData->total_out_qty : 0;
             $requiredQty = $data['cut_weight'] * $jobData->qty;
-            $usedQty = $data['cut_weight'] * $aprvData->total_out_qty;
+            $usedQty = $data['cut_weight'] * $total_out_qty;
             $result = $this->store($this->jobBom,['id'=>$data['job_bom_id'],'qty'=>$data['cut_weight'],'req_qty'=>$requiredQty,'used_qty'=>$usedQty]);
 
             /***** Update Out qty in job_heat_trans */
-            if($aprvData->total_out_qty > 0){
+            if($total_out_qty > 0){
                 $heatData = $this->getHeatData(['job_approval_id'=>$aprvData->id]);
                 $this->edit($this->job_heat_trans,['job_approval_id'=>$aprvData->id],['out_qty'=>0]);
 

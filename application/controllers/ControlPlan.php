@@ -268,7 +268,7 @@ class ControlPlan extends MY_Controller{
 
 		$options = '<option value="">Select Process</option>';
 		foreach($processList as $key=>$value):
-				$processData = $this->process->getProcess($value);
+				$processData = $this->process->getProcessData($value);
 				$options .= '<option value="'.$processData->id.'">'.$processData->process_name.'</option>';
 		endforeach;
         $this->printJson(['status'=>1, 'options'=>$options]);
@@ -365,7 +365,7 @@ class ControlPlan extends MY_Controller{
         $options = '<option value="">Select Process</option>';
         if(isset($processList)):
             foreach($processList as $key=>$value):
-                $pdata = $this->process->getProcess($value);
+                $pdata = $this->process->getProcessData($value);
                 $selected = (!empty($dataRow->process_id) && $dataRow->process_id == $pdata->id)?"selected":"";
                 $options .= '<option value="'.$pdata->id.'" '.$selected.'>'.$pdata->process_name.'</option>';               
             endforeach; 

@@ -43,6 +43,7 @@
 				<th style="width:10%;">Unit</th>
 				<th style="width:15%;">Qty.(Opt. Unit)</th>
 				<th style="width:15%;">Qty.(As/P.O.)</th>
+				<th style="width:15%;">Heat No.</th>
 				<th style="width:15%;">Rate</th>
 				<th style="width:15%;">P.O. No.</th>
 			</tr>
@@ -50,7 +51,8 @@
 				$i=1; $totalQty=0;
 				if(!empty($grnData->itemData)):
 					foreach($grnData->itemData as $row): 
-						$item_name = str_replace(["\r\n", "\r", "\n"], "<br/>", $row->item_name);
+						$item_code = !empty($row->item_code) ? '['.$row->item_code.'] ' : '';
+						$item_name = $item_code.str_replace(["\r\n", "\r", "\n"], "<br/>", $row->item_name);
                       
 						echo '<tr>';
 							echo '<td class="text-center">'.$i++.'</td>';
@@ -58,6 +60,7 @@
 							echo '<td class="text-center">'.$row->unit_name.'</td>';
 							echo '<td class="text-right">'.$row->qty_kg.'</td>';
 							echo '<td class="text-right">'.$row->qty.'</td>';
+							echo '<td class="text-center">'.$row->batch_no.'</td>';
 							echo '<td class="text-right">'.$row->price.'</td>';
 							echo '<td class="text-center">'.$row->po_prefix.$row->po_no.'</td>';
 						echo '</tr>';
@@ -68,7 +71,7 @@
             <tr>
                 <td colspan="4" class="text-right">Total : </td>
                 <td class="text-right"><?=$totalQty?></td>
-                <td colspan="2"></td>
+                <td colspan="3"></td>
             </tr>
 		</table>
 	</div>

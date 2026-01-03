@@ -79,7 +79,7 @@
 							
 					endforeach;
 				else:
-					$tbodyData.= '<tr><td colspan="12" style="text-align:center;">No Data Found</td></tr>';
+					$tbodyData.= '<tr><td colspan="17" style="text-align:center;">No Data Found</td></tr>';
 				endif;
 				echo $tbodyData;
 			?>

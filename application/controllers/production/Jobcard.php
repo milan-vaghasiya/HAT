@@ -273,7 +273,7 @@ class Jobcard extends MY_Controller{
             $rej_belongs = $this->processMovement->getRejBelongsTo($id, $process_id);
            
             $row->process_id = $process_id;
-            $row->process_name = (!empty($jobApprovalData->in_process_name)) ? $jobApprovalData->in_process_name : ((!empty($process_id)) ? $this->process->getProcess($process_id)->process_name : "Raw Material");
+            $row->process_name = (!empty($jobApprovalData->in_process_name)) ? $jobApprovalData->in_process_name : ((!empty($process_id)) ? $this->process->getProcessData($process_id)->process_name : "Raw Material");
             $row->job_id = $id;
             $row->id = (!empty($jobApprovalData->id)) ? $jobApprovalData->id : 0;
             $row->product_id = $jobCardData->product_id;

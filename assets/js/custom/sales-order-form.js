@@ -330,7 +330,7 @@ $(document).ready(function(){
 				$("#trans_id").val("");
 				$("#row_index").val($('#salesOrderItems tbody').find('tr').length);
 				$("#item_id").html(response.partyItems);
-				$("#item_id").select2();
+				$("#item_id").select2({dropdownParent: $('#itemModel')});
 				setPlaceHolder();
 				$("#itemModel").modal();
 				$(".btn-close").show();

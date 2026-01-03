@@ -48,6 +48,12 @@ class ProcessModel extends MasterModel{
         return $this->row($data);
     }
 
+    public function getProcessData($id){
+        $this->db->select('*');
+        $this->db->where('id', $id);
+        return $this->db->get($this->processMaster)->row();
+    }
+
     public function getProcessDetail($id){
         $data['where']['id'] = $id;
         $data['tableName'] = $this->processMaster;

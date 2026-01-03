@@ -742,8 +742,13 @@ class Grn extends MY_Controller
             foreach($insParamData as $row):
                 $param = Array();
                 for($j = 1; $j <= 10; $j++):
-                    $param[] = $data['sample'.$j.'_'.$row->id];
-                    unset($data['sample'.$j.'_'.$row->id]);
+					$key = 'sample'.$j.'_'.$row->id;
+					if (isset($data[$key])) {
+						$param[] = $data[$key];
+						unset($data[$key]);
+					} else {
+						$param[] = null;
+					}
                 endfor;
                 $param[] = $data['result_'.$row->id];
                 $pre_inspection[$row->id] = $param;
@@ -767,29 +772,31 @@ class Grn extends MY_Controller
 
 	public function inInspection_pdf($id){
 		$this->data['inInspectData'] = $inInspectData = $this->grnModel->getInInspection($id);
-		$this->data['paramData'] =  $this->item->getPreInspectionParam($inInspectData->item_id); //print_r($this->data['paramData']);exit;
+
+		$this->data['paramData'] = !empty($inInspectData->item_id) ? $this->item->getPreInspectionParam($inInspectData->item_id) : []; //print_r($this->data['paramData']);exit;
 		$this->data['companyData'] = $this->purchaseOrder->getCompanyInfo();
 		
-		$inInspectData->fgCode="";
+		$inInspectData->fgCode ?? "";
 		if(!empty($inInspectData->fgitem_id)): $i=1; 
 			$fgData = $this->grnModel->getFinishGoods($inInspectData->fgitem_id);
 			$item_code = array_column($fgData,'item_code');
 			$inInspectData->fgCode = implode(", ",$item_code);
 		endif;
 
-		$prepare = $this->employee->getEmp($inInspectData->created_by);
-		$prepareBy = $prepare->emp_name.' <br>('.formatDate($inInspectData->created_at).')'; 
-		$approveBy = '';
-		if(!empty($inInspectData->is_approve)){
-			$approve = $this->employee->getEmp($inInspectData->is_approve);
-			$approveBy .= $approve->emp_name.' <br>('.formatDate($inInspectData->approve_date).')'; 
+		if(!empty($inInspectData)){
+			$prepare = $this->employee->getEmp($inInspectData->created_by);
+			$prepareBy = $prepare->emp_name.' <br>('.formatDate($inInspectData->created_at).')'; 
+			$approveBy = '';
+			if(!empty($inInspectData->is_approve)){
+				$approve = $this->employee->getEmp($inInspectData->is_approve);
+				$approveBy .= $approve->emp_name.' <br>('.formatDate($inInspectData->approve_date).')'; 
+			}
 		}
 		$response="";
 		$logo=base_url('assets/images/logo.png'); $unapproved = base_url('assets/images/unapproved.jpg');
 		$this->data['letter_head']=base_url('assets/images/letterhead_top.png');
 		
-		$pdfData = $this->load->view('grn/printInInspection',$this->data,true);
-		
+		$pdfData = $this->load->view('grn/printInInspection',$this->data,true); 		
 		$paramData = $this->data['paramData'];
 		$htmlHeader = '<table class="table">
 							<tr>
@@ -801,8 +808,8 @@ class Grn extends MY_Controller
 		$htmlFooter = '<table class="table" style="border-bottom:1px solid #000000;">
 						<tr>
 							<td style="width:50%;"></td>
-							<td style="width:25%;" class="text-center">'.$prepareBy.'</td>
-							<td style="width:25%;" class="text-center">'.$approveBy.'</td>
+							<td style="width:25%;" class="text-center">'.($prepareBy ?? '').'</td>
+							<td style="width:25%;" class="text-center">'.($approveBy ?? '').'</td>
 						</tr>
 						<tr>
 							<td style="width:50%;"></td>

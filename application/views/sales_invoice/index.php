@@ -260,7 +260,7 @@
 			window.open(url);
 		}
 	}
-
+	
 	/**
 	 * Added by milan v(30-10-2025)
 	*/

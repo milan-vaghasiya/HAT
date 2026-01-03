@@ -305,13 +305,11 @@ $(document).ready(function(){
 					AddRow(formData);
                     $('#orderItemForm')[0].reset();
                     if($(this).data('fn') == "save"){
-                        //$("#item_id").comboSelect();
 						$("#item_id").select2();
                         $("#item_idc").focus();
 						$("#row_index").val($('#salesOrderItems tbody').find('tr').length);
                     }else if($(this).data('fn') == "save_close"){
                         $("#itemModel").modal('hide');
-                        //$("#item_id").comboSelect();
 						$("#item_id").select2();
                     }   
 				}
@@ -332,7 +330,6 @@ $(document).ready(function(){
 				$("#trans_id").val("");
 				$("#row_index").val($('#salesOrderItems tbody').find('tr').length);
 				$("#item_id").html(response.partyItems);
-				//$("#item_id").comboSelect();
 				$("#item_id").select2();
 				setPlaceHolder();
 				$("#itemModel").modal();
@@ -354,7 +351,6 @@ $(document).ready(function(){
 
     $(document).on('click','.btn-close',function(){
         $('#orderItemForm')[0].reset();
-        //$("#item_id").comboSelect();
 		$("#item_id").select2();
         $("#orderItemForm .error").html("");
     });
@@ -588,9 +584,7 @@ function Edit(data,button){
 	$("#itemModel").modal();
 	var item_id = "";
 	$.each(data,function(key, value) { if(key == "item_id"){item_id = value;} $("#"+key).val(value); }); 
-	//$("#item_id").comboSelect();
 	$("#item_id").select2();
-	//$("#drg_rev_no").comboSelect();
 	$("#material_grade").comboSelect();
 	$(".btn-save").hide();
 
@@ -637,9 +631,7 @@ function EditItem(data,button){
 		if(key == "material_grade"){material_grade = value;}
 		$("#"+key).val(value); 
 	}); 
-	//$("#item_id").comboSelect();
 	$("#item_id").select2();
-	//$("#drg_rev_no").comboSelect();
 	$("#material_grade").comboSelect();
 	$(".btn-save").hide();
 

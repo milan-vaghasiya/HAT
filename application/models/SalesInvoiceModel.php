@@ -7,7 +7,7 @@ class SalesInvoiceModel extends MasterModel{
     private $transMain = "trans_main";
     private $transChild = "trans_child";
     private $packingTrans = "packing_transaction";
-    private $packingSlipDetails = "packing_slip_details";
+	private $packingSlipDetails = "packing_slip_details";
     
     /** As Per Shining **/
     public function getDTRows($data){ 
@@ -722,35 +722,8 @@ class SalesInvoiceModel extends MasterModel{
 		return $this->pagingRows($data);
     }
 	
-	/*  Create By : Avruti @29-11-2021 4:00 PM
-        update by : 
-        note : 
-    */
-    //---------------- API Code Start ------//
-
-    public function getCount($type=0){
-		  $data['tableName'] = $this->transMain;
-		
-        return $this->numRows($data);
-    }
-
-    public function getSalesInvoiceList_api($limit, $start,$type=0){
-        $data['tableName'] = $this->transMain;
-        $data['select'] = "trans_main.*";
-        // $data['where_in']['trans_main.sales_type'] = $data['sales_type'];
-        // $data['where_in']['trans_main.entry_type'] = $data['entry_type'];
-        $data['customWhere'][] = 'trans_main.entry_type IN ('.$data['entry_type'].')';
-        // $data['order_by']['trans_main.trans_date'] = "DESC";
-        $data['order_by']['trans_main.trans_no'] = "ASC";
-
-        $data['length'] = $limit;
-        $data['start'] = $start;
-        return $this->rows($data);
-    }
-
-    //------ API Code End -------//
-
-    /*
+	
+	/*
         Created by milan v(30-10-2025)
     */
 
@@ -857,5 +830,34 @@ class SalesInvoiceModel extends MasterModel{
             return ['status'=>2,'message'=>"somthing is wrong. Error : ".$e->getMessage()];
         }	
     }
+	
+	
+	/*  Create By : Avruti @29-11-2021 4:00 PM
+        update by : 
+        note : 
+    */
+    //---------------- API Code Start ------//
+
+    public function getCount($type=0){
+		  $data['tableName'] = $this->transMain;
+		
+        return $this->numRows($data);
+    }
+
+    public function getSalesInvoiceList_api($limit, $start,$type=0){
+        $data['tableName'] = $this->transMain;
+        $data['select'] = "trans_main.*";
+        // $data['where_in']['trans_main.sales_type'] = $data['sales_type'];
+        // $data['where_in']['trans_main.entry_type'] = $data['entry_type'];
+        $data['customWhere'][] = 'trans_main.entry_type IN ('.$data['entry_type'].')';
+        // $data['order_by']['trans_main.trans_date'] = "DESC";
+        $data['order_by']['trans_main.trans_no'] = "ASC";
+
+        $data['length'] = $limit;
+        $data['start'] = $start;
+        return $this->rows($data);
+    }
+
+    //------ API Code End -------//
 }
 ?>

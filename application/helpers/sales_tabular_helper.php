@@ -348,9 +348,9 @@ function getDeliveryChallanData($data){
         $edit = '<a href="'.base_url($data->controller.'/edit/'.$data->trans_main_id).'" class="btn btn-success btn-edit permission-modify" datatip="Edit" flow="down"><i class="fa fa-edit"></i></a>';
         $delete = '<a href="javascript:void(0)" class="btn btn-danger btn-delete permission-remove" onclick="trash('.$deleteParam.');" datatip="Remove" flow="down"><i class="ti-trash"></i></a>';
     endif;
-
-    $advisePrintBtn = '<a class="btn btn-dribbble btn-edit" href="'.base_url($data->controller.'/dispatch_advise_pdf/'.$data->trans_main_id).'" target="_blank" datatip="Print Dispatch Advise" flow="down"><i class="fas fa-print" ></i></a>';
-
+	
+	$advisePrintBtn = '<a class="btn btn-dribbble btn-edit" href="'.base_url($data->controller.'/dispatch_advise_pdf/'.$data->trans_main_id).'" target="_blank" datatip="Print Dispatch Advise" flow="down"><i class="fas fa-print" ></i></a>';
+	
     if($data->party_id == 5):
         $backPrint = '<a class="btn btn-danger btn-edit" href="'.base_url('deliveryChallan/back_pdf_forBhavani/'.$data->trans_main_id).'" target="_blank" datatip="Back Print" flow="down"><i class="fas fa-print" ></i></a>';
 
@@ -392,17 +392,14 @@ function getSalesInvoiceData($data){
     }
     $tcPrint = '';//'<a href="'.base_url($data->controller.'/printTestReport/'.$data->id).'" class="btn btn-primary btn-edit permission-modify" datatip="Print Test Certificate" flow="down" target="_blank"><i class="fa fa-print"></i></a>';
     
-    $packingSlipPrintBtn = '';
-    if($data->is_available_packing_slip){
-        $packingSlipPrintBtn = '<a class="btn btn-dribbble btn-edit" href="'.base_url($data->controller.'/packing_slip_pdf/'.$data->id).'" target="_blank" datatip="Print Packing Slip" flow="down"><i class="fas fa-print" ></i></a>';
-    }
-
-    $packingParam = "{'id' : ".$data->id.", 'modal_id' : 'modal-lg', 'form_id' : 'packingForm', 'button':'close', 'title' : 'Packing Slip', fnEdit:'addPackingSlip', showHtml:true, fnhtml:'getPackingSlipItemList' }";
-    $packingSlip = '<a class="btn btn-primary permission-approve" href="javascript:void(0)" datatip="Add Packing Slip" flow="down" onclick="editWithHtml('.$packingParam.');"><i class="fa fa-file-alt" ></i></a>'; 
+    $printpslipBtn = '<a class="btn btn-dribbble btn-edit" href="'.base_url($data->controller.'/packing_slip_pdf/'.$data->id).'" target="_blank" datatip="Print Packing Slip" flow="down"><i class="fas fa-print" ></i></a>';
+	
+	$packingParam = "{'id' : ".$data->id.", 'modal_id' : 'modal-lg', 'form_id' : 'packingForm', 'button':'close', 'title' : 'Packing Slip', fnEdit:'addPackingSlip', showHtml:true, fnhtml:'getPackingSlipItemList' }";
+    $packingSlip = '<a class="btn btn-primary permission-approve" href="javascript:void(0)" datatip="Add Packing Slip" flow="down" onclick="editWithHtml('.$packingParam.');"><i class="fa fa-file-alt" ></i></a>';
 
     if($data->listType == 'LISTING')
     {
-        $action = getActionButton($packingSlip.$packingSlipPrintBtn.$tcPrint.$printCustom.$printExport.$print.$edit.$delete);
+		$action = getActionButton($packingSlip.$printpslipBtn.$tcPrint.$printCustom.$printExport.$print.$edit.$delete);
     	if($data->tp == 'BILLWISE')
     	{
     		return [$action,$data->sr_no,$data->trans_number,date("d-m-Y",strtotime($data->trans_date)),$data->party_name,$data->taxable_amount,$data->gst_amount,$data->net_amount];

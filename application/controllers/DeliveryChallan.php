@@ -781,80 +781,6 @@ class DeliveryChallan extends MY_Controller{
 		$mpdf->Output($pdfFileName,'I');
 	}
 	
-	//Created By Karmi @11/04/2022
-	public function challan_pdf_Forbhvani($id){
-		$salesData = $this->challan->getChallan($id);
-		$this->data['companyData'] = $this->challan->getCompanyInfo();
-		$this->data['salesData'] = $salesData;		
-		$this->data['partyData'] = $this->party->getParty($salesData->party_id);
-		$itemData = $salesData->itemData;		
-		$this->data['stateData'] = $this->party->getPartyState($this->data['partyData']->state_id);		
-		$tblData = '';$i=1; $TaxAmt =0; $cgst=0;$sgst=0;
-		foreach($itemData as $row){
-			$tblData .= '<tr class="text-center">
-                            <td>'.$i++.'</td>
-                            <td colspan="2" >'.$row->item_name.'</td>
-                            <td>'.$row->hsn_code.'</td>
-                            <td> '.$row->qty.'</td>
-                            <td>'.$row->unit_name.'</td>
-                            <td>'.$row->price.'</td>
-                            <td>'.($row->qty * $row->price).'</td>
-                        </tr>';
-						$TaxAmt += ($row->qty * $row->price);
-		}
-		$this->data['tableBody'] = $tblData; 
-		$this->data['TaxAmt'] = $TaxAmt;
-		$this->data['cgst'] = ($this->data['TaxAmt'] * 6)/100;
-		$this->data['totalTaxAmt'] = $this->data['TaxAmt'] + $this->data['cgst'] + $this->data['cgst'];	
-		$auth_sign=base_url('assets/images/rtth_sign.png');
-        $pdfData = $this->load->view('delivery_challan/bhvani_dc_pdf',$this->data,true);
-		
-        $mpdf = $this->m_pdf->load();
-        $pdfFileName='JWO -REG-'.$id.'.pdf';
-        $stylesheet = file_get_contents(base_url('assets/css/pdf_style.css'));
-        $mpdf->WriteHTML($stylesheet,1);
-        $mpdf->SetDisplayMode('fullpage');
-        $mpdf->SetProtection(array('print'));
-        $mpdf->AddPage('P','','','','',5,5,5,5,5,5,'','','','','','','','','','A4-P');
-        $mpdf->WriteHTML($pdfData);
-        $mpdf->Output($pdfFileName,'I');
-     }
-
-	/* Created By : Karmi @15-04-2022*/
-	public function back_pdf_forBhavani($id){
-		$salesData = $this->challan->getBackPrintForChallan($id);
-		$this->data['companyData'] = $this->challan->getCompanyInfo();
-		$this->data['salesData'] = $salesData;		
-		$tblData = '';$i=1; $totalRejQty = 0; $totalQty=0;
-		foreach($salesData as $row){
-			$tblData .= '<tr class="text-center">
-                            <td >'.$row->vou_name_s.'</td>
-                            <td >'.$row->trans_date.'</td>
-                            <td >'.$row->trans_no.'</td>
-                            <td >'.$row->qty.'</td>
-                            <td >'.$row->rej_qty.'</td>
-                            <td >'.($row->grnQty - $row->dc_qty).'</td>                
-                        </tr>';
-			$totalRejQty += $row->rej_qty;
-			$totalQty += $row->qty;
-		}
-		$this->data['tableBody'] = $tblData; 
-		$this->data['totalRejQty'] = $totalRejQty; 
-		$this->data['totalQty'] = $totalQty; 
-		$auth_sign=base_url('assets/images/rtth_sign.png');
-        $pdfData = $this->load->view('delivery_challan/bhavani_back_pdf',$this->data,true);
-		
-        $mpdf = $this->m_pdf->load();
-        $pdfFileName='JWO -REG-'.$id.'.pdf';
-        $stylesheet = file_get_contents(base_url('assets/css/pdf_style.css'));
-        $mpdf->WriteHTML($stylesheet,1);
-        $mpdf->SetDisplayMode('fullpage');
-        $mpdf->SetProtection(array('print'));
-        $mpdf->AddPage('P','','','','',5,5,5,5,5,5,'','','','','','','','','','A4-P');
-        $mpdf->WriteHTML($pdfData);
-        $mpdf->Output($pdfFileName,'I');
-    }
-
 	/*Created By Milan v @29-10-2025*/
 	public function dispatch_advise_pdf($id = ''){			
 		$this->data['salesData'] = $salesData = $this->challan->getChallan($id);
@@ -893,5 +819,6 @@ class DeliveryChallan extends MY_Controller{
 		
 		$mpdf->Output($pdfFileName,'I');
 	}
+	
 }
 ?>

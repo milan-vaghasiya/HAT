@@ -99,13 +99,12 @@ class Items extends MY_Controller
         if(!empty($errorMessage)):
             $this->printJson(['status'=>0,'message'=>$errorMessage]);
         else:
-			if($data['rm_type'] == 0):
-				$data['item_name'] = $data['itmsize'].' ';
-				$data['item_name'] .= $data['itmshape'].' ';
-				$data['item_name'] .= $data['itmbartype'].' ';
-				// $data['item_name'] .= $data['itmmaterialtype'];
-    			$data['item_image'] =  $data['itmsize'] . '☻' . $data['itmshape'] . '☻' . $data['itmbartype'] . '☻' ; //. '☻' . $data['gname'];// . '☻' . $data['sbname'];
-				$data['size'] = $data['itmsize'];
+			if(empty($data['rm_type'])):
+				//$data['item_name'] = $data['itmsize'].' ';
+				//$data['item_name'] .= $data['itmshape'].' ';
+				//$data['item_name'] .= $data['itmbartype'].' ';
+    			//$data['item_image'] =  $data['itmsize'] . '☻' . $data['itmshape'] . '☻' . $data['itmbartype'] . '☻' ;
+				//$data['size'] = $data['itmsize'];
 				
 				
             else:

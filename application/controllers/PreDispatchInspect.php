@@ -221,7 +221,7 @@ class PreDispatchInspect extends MY_Controller
 		
 		$htmlHeader = '<table class="table top-table-border">
                         <tr>
-                            <th style="width:80%;font-size:25px;">AKSHAR ENGINEERS</th>
+                            <th style="width:80%;font-size:25px;">'.$companyData->company_name.'</th>
                             <td>
                                 <img src="'.$logo.'">
                             </td>                                   
@@ -267,11 +267,11 @@ class PreDispatchInspect extends MY_Controller
 		$stylesheet = file_get_contents(base_url('assets/css/pdf_style.css'));
 		$mpdf->WriteHTML($stylesheet,1);
 		$mpdf->SetDisplayMode('fullpage');
-		$mpdf->SetProtection(array('print'));
+		//$mpdf->SetProtection(array('print'));
 		
 		$mpdf->SetHTMLHeader($htmlHeader);
 		$mpdf->SetHTMLFooter($htmlFooter);
-		$mpdf->AddPage('P','','','','',5,5,50,25,5,75,'','','','','','','','','','A4-P');
+		$mpdf->AddPage('P','','','','',5,5,50,25,5,5,'','','','','','','','','','A4-P');
 		$mpdf->WriteHTML($pdfData);
 		$mpdf->Output($pdfFileName,'I');		
 	}
@@ -327,9 +327,11 @@ class PreDispatchInspect extends MY_Controller
 		
 		$mpdf->SetHTMLHeader($htmlHeader);
 		$mpdf->SetHTMLFooter($htmlFooter);
-		$mpdf->AddPage('P','','','','',5,5,35,25,5,5,'','','','','','','','','','A4-L');
+		//$mpdf->AddPage('P','','','','',5,5,35,25,5,5,'','','','','','','','','','A4-L');
+		$mpdf->AddPage('P','','','','',5,5,50,25,5,75,'','','','','','','','','','A4-L');
 		$mpdf->WriteHTML($pdfData);
 		$mpdf->Output($pdfFileName,'I');		
 	}
+
 }
 ?>

@@ -22,28 +22,9 @@
                 $itmtp = (!empty($dataRow->item_type))?$dataRow->item_type:$item_type;  
             ?>
          
-            <div class="col-md-3 form-group">
-                <label for="rm_type">RM Type</label>
-                <select name="rm_type" id="rm_type" class="form-control" >
-                   
-                    <option value="1" <?=(!empty($dataRow->rm_type) && $dataRow->rm_type == "1")?"selected":""?>>IC</option>
-                    <option value="0" <?=(!empty($dataRow) && $dataRow->rm_type == "0")?"selected":""?>>RM</option>
-                   
-                </select>
-            </div>
-            <div class="col-md-6 form-group" id="item_div">
+            <div class="col-md-9 form-group" id="item_div">
                 <label for="item_name">Item Name</label>
 				<input type="text" name="item_name" class="form-control req" value="<?=(!empty($dataRow->item_name)) ? $dataRow->item_name : ""?>" />
-            </div>
-            <div class="col-md-6 form-group" id="size_div" style="display:none;">
-                <label for="item_name">Item Name</label>
-                <div class="input-group">
-                    <?php $itmGroup = (!empty($dataRow->item_image))?explode('☻',$dataRow->item_image):""; ?>
-                    <input type="text" name="itmsize" id="insize" class="form-control" placeholder="Size" value="<?=(!empty($itmGroup[0]))?$itmGroup[0]:""?>" style="max-width:33%;" />
-                    <input type="text" name="itmshape" id="insize" class="form-control noSpecialChar" placeholder="Shape" value="<?=(!empty($itmGroup[1]))?$itmGroup[1]:""?>" />
-                    <input type="text" name="itmbartype" id="insize" class="form-control" placeholder="Bar Type" value="<?=(!empty($itmGroup[2]))?$itmGroup[2]:""?>" style="max-width:33%;" />
-                </div>
-				
             </div>
 
             <div class="col-md-3 form-group">
@@ -172,26 +153,6 @@
                 $("#part_no").comboSelect();
             }
         });
-
-        $(document).on('change', '#rm_type', function() {
-            
-		var rm_type = $(this).val();
-            
-		if(rm_type == 1){
-			$("#item_div").show();
-            $("#size_div").hide();
-            $("#item_div").addClass("col-md-6");
-            $("#size_div").removeClass("col-md-6");
-		}else{
-			$("#item_div").removeClass("col-md-6");
-			$("#size_div").addClass("col-md-6");
-            $("#size_div").show();
-            $("#item_div").hide();
-		}
 	});
-    setTimeout(function(){ 
-		$('#rm_type').trigger('change');
-	}, 500);
-});
     
 </script>

@@ -510,7 +510,7 @@ class ProformaInvoice extends MY_Controller{
 				}
 				else
 				{
-					$mpdf->AddPage('P','','','','',0,0,33,3,3,0);
+					$mpdf->AddPage('P','','','','',0,0,50,3,3,0);
 					$mpdf->WriteHTML('<div style="position:relative;"><div class="poDiv">'.$invoiceType[0].$baseDetail.$pg.'</div></div>');
 				}
 			}

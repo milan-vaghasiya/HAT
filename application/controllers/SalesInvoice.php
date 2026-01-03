@@ -5,8 +5,8 @@ class SalesInvoice extends MY_Controller{
 	private $itemwiseInvoice = "sales_invoice/itemwise_invoice";
     private $invoiceForm = "sales_invoice/form";
 	private $tc_index = "sales_invoice/tc_index";
-	private $packingSlipForm = "sales_invoice/packing_slip_form";
     private $gstPercentage = Array(["rate"=>0,"val"=>'NIL'],["rate"=>0.1,"val"=>'0.1%'],["rate"=>0.25,"val"=>'0.25%'],["rate"=>3,"val"=>'3%'],["rate"=>5,"val"=>'5%'],["rate"=>12,"val"=>'12%'],["rate"=>18,"val"=>'18%'],["rate"=>28,"val"=>'28%']);
+	private $packingSlipForm = "sales_invoice/packing_slip_form";
 	
 	public function __construct(){ 
 		parent::__construct();
@@ -26,8 +26,6 @@ class SalesInvoice extends MY_Controller{
         $result = $this->salesInvoice->getDTRows($data);
         $sendData = array();$i=1;
         foreach($result['data'] as $row):
-			$existPackingSlipData = $this->salesInvoice->getPackingSlipItems($row->id);
-
             $row->sr_no = $i++; $row->po_no = ''; $row->ref_no = '';
             /*if(!empty($row->from_entry_type)):
                $refData = $this->salesInvoice->getInvoice($row->ref_id);
@@ -36,7 +34,6 @@ class SalesInvoice extends MY_Controller{
             $row->controller = $this->data['headData']->controller;
 			$row->tp = 'BILLWISE';
 			$row->listType = 'LISTING';
-			$row->is_available_packing_slip = (!empty($existPackingSlipData) ? true : false);
             $sendData[] = getSalesInvoiceData($row);
         endforeach;        
         $result['data'] = $sendData;
@@ -1535,5 +1532,6 @@ class SalesInvoice extends MY_Controller{
 		
 		$mpdf->Output($pdfFileName,'I');
 	}
+
 }
 ?>

@@ -333,5 +333,13 @@ class PreDispatchInspect extends MY_Controller
 		$mpdf->Output($pdfFileName,'I');		
 	}
 
+    public function invoiceItemLink(){
+        $data = $this->input->post();
+
+        $getPreInspection = $this->preDispatch->getPreInspection($data['id']);
+        $this->data['id'] = $data['id'];
+		$this->data['invItemList'] = $this->preDispatch->pendingPdiItemList(['item_id'=>$getPreInspection->item_id]);
+		$this->load->view('predispatch_inspect/link_invoice',$this->data);
+	}
 }
 ?>

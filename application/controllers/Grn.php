@@ -933,6 +933,43 @@ class Grn extends MY_Controller
         if(empty($data['min_value']))
 			$errorMessage['generalError'] = "Material Specification is required.";
 
+		//Check Result Validation
+		$count = 0;
+		$prevType = null;
+		foreach ($data['spec_type'] as $key => $type) {
+			if(in_array($type, [1, 2])) {
+				if ($type != 1 && $type != 2) {
+					$prevType = $type;
+					continue;
+				}
+				if ($type !== $prevType) {
+					$count = 0;
+				}
+				$count++;
+
+				$resultVal = trim($data['result'][$key]);
+				if ($resultVal === '' || !is_numeric($resultVal)) {
+					$prevType = $type;
+					continue;
+				}
+
+				$min = (float)$data['min_value'][$key];
+				$max = (float)$data['max_value'][$key];
+				$res = (float)$resultVal;
+
+				if ($max > 0) {
+					if ($res < $min || $res > $max) {
+						$errorMessage[$type.$count] = "Value must be between $min and $max";
+					}
+				} else {
+					if ($res < $min) {
+						$errorMessage[$type.$count] = "Value must be greater than to $min";
+					}
+				}
+				$prevType = $type; 
+			}
+		}
+
         if (!empty($errorMessage)) :
             $this->printJson(['status' => 0, 'message' => $errorMessage]);
         else :

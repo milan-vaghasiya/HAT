@@ -109,6 +109,7 @@
 													<th>Qty.</th>
 													<th>Qty.(Optional Unit)</th>
 													<th>Unit</th>
+													<th>Optional Unit</th>
 													<th>Price</th>
 													<th class="igstCol">IGST</th>
 													<th class="cgstCol">CGST</th>
@@ -153,6 +154,10 @@
 																	<input type="hidden" name="fgitem_id[]" value="<?=$reqItem->fgitem_id?>">
 																	<input type="hidden" name="fgitem_name[]" value="<?=htmlentities($reqItem->fgitem_name)?>">
 																	<input type="hidden" name="wo_no[]" value="<?=$reqItem->wo_no?>">
+																</td>
+																<td>
+																	<?= $reqItem->optional_unit_name ?>
+																	<input type="hidden" name="optional_unit_id[]" value="<?= $reqItem->optional_unit_id ?>">
 																</td>
 																<td>
 																	<?= $reqItem->price ?>
@@ -234,6 +239,10 @@
 																<input type="hidden" name="fgitem_id[]" value="<?= $row->fgitem_id ?>">
 																<input type="hidden" name="fgitem_name[]" value="<?=htmlentities($row->fgitem_name)?>">
 																<input type="hidden" name="wo_no[]" value="<?=$row->wo_no?>">
+															</td>
+															<td>
+																<?= $row->optional_unit_name ?>
+																<input type="hidden" name="optional_unit_id[]" value="<?= $row->optional_unit_id ?>">
 															</td>
 															<td>
 																<?= $row->price ?>
@@ -462,6 +471,7 @@
 							<input type="hidden" name="unit_id" id="unit_id" value="" >
                             <input type="hidden" name="item_gst" id="item_gst" value="" />
                             <input type="hidden" name="hsn_code" id="hsn_code" value="" />
+                            <input type="hidden" id="item_price" value="0" />
                             
 							<div class="col-md-6 form-group">
 								<label for="item_type">Item Category</label>
@@ -512,17 +522,29 @@
                             </div>
 
 
-                            <div class="col-md-6 form-group">
+                            <div class="col-md-4 form-group">
                                 <label for="qty">Qty.</label>
-                                <input type="text" name="qty" id="qty" class="form-control floatOnly" value="0">
+                                <input type="text" name="qty" id="qty" class="form-control floatOnly price_calculation" value="0">
                             </div>
-							<div class="col-md-6 form-group">
+							<div class="col-md-4 form-group">
                                 <label for="qty_kg">Qty.(Optional Unit)</label>
-                                <input type="text" name="qty_kg" id="qty_kg" class="form-control floatOnly" value="0">
+                                <input type="text" name="qty_kg" id="qty_kg" class="form-control floatOnly price_calculation" value="0">
                             </div>
+							<div class="col-md-4 form-group">
+								<label for="optional_unit_id">Unit</label>
+								<select name="optional_unit_id" id="optional_unit_id" class="form-control single-select">
+									<option value="">Select Unit</option>
+									<?php                                        
+										foreach($unitData as $row):		
+											echo "<option value='".$row->id."'>".$row->unit_name."</option>";
+										endforeach;                                       
+									?>
+								</select>
+							</div>
+							
 							<div class="col-md-6 form-group">
                                 <label for="rate_unit">Price Unit</label>
-                                <select name="rate_unit" id="rate_unit" class="form-control">
+                                <select name="rate_unit" id="rate_unit" class="form-control price_calculation">
 									<option value="1">As Per Main Unit</option>
 									<option value="2">As Per Optional Unit</option>
 								</select>
@@ -648,15 +670,37 @@ $(document).ready(function(){
 	}
 	});
 
-$(document).on('click','#items',function(){
-	$(".item_id").html("");
-	if($("#item_id").val() == ""){
-		$(".item_id").html("Item name is required.");
-	}else{
-		$("#ItemPriceModel").modal();
+	$(document).on('click','#items',function(){
+		$(".item_id").html("");
+		if($("#item_id").val() == ""){
+			$(".item_id").html("Item name is required.");
+		}else{
+			$("#ItemPriceModel").modal();
 
-		var party_id = $("#party_id").val();
-	}		
-});
+			var party_id = $("#party_id").val();
+		}		
+	});
+
+	$(document).on('input change', '.price_calculation, #price', function () {
+		calculatePrice();
+	});
+	function calculatePrice() {
+		let qty       = parseFloat($('#qty').val()) || 0;
+		let qtyKg     = parseFloat($('#qty_kg').val()) || 0;
+		let price     = parseFloat($('#item_price').val()) || 0;
+		let rateUnit  = $('#rate_unit').val();
+
+		if(price > 0){
+			let total = 0;
+			if (rateUnit == 1) {
+				total = qty * price;
+			} else if (rateUnit == 2) {
+				total = qtyKg * price;
+			}
+			total = Number.isInteger(total) ? total : total.toFixed(2);
+
+			$('#price').val(total);
+		}
+	}
 });	
 </script>

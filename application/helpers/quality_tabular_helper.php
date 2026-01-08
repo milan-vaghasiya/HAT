@@ -255,6 +255,10 @@ function getPurchaseMaterialInspectionData($data){
 
 /* get PreDispatch Inspect Data */
 function getPreDispatchInspectData($data){
+    $linkInvBtn = '';
+    // $lnkInvParam = "{'id' : ".$data->id.",'item_id' : ".$data->item_id.", 'modal_id' : 'modal-lg', 'form_id' : 'linkInv', 'title' : 'Invoice Item ', 'fnEdit' : 'invoiceItemLink', 'fnSave' : 'saveInvoiceLink'}";
+    // $linkInvBtn = '<a class="btn btn-instagram btn-edit" href="javascript:void(0)" datatip="linkInv" flow="down" onclick="edit('.$lnkInvParam.');"><i class="fas fa-link"></i></a>';
+
     $deleteParam = $data->id.",'PreDispatch Inspection'";
     $editButton = '<a href="'.base_url($data->controller.'/edit/'.$data->id).'" class="btn btn-success btn-edit permision-modify" datatip="Edit" flow="down"><i class="fa fa-edit"></i></a>';
 
@@ -262,7 +266,7 @@ function getPreDispatchInspectData($data){
 
     $printBtn = '<a class="btn btn-info btn-edit" href="'.base_url('preDispatchInspect/printFinalInspection/'.$data->id).'" target="_blank" datatip="Print" flow="down"><i class="fas fa-print" ></i></a>';
 
-	$action = getActionButton($printBtn.$editButton.$deleteButton);
+	$action = getActionButton($linkInvBtn.$printBtn.$editButton.$deleteButton);
     return [$action,$data->sr_no,$data->report_number,date("d-m-Y",strtotime($data->date)),$data->item_code,$data->item_name];
 }
 

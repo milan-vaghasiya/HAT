@@ -39,7 +39,7 @@
 				<th class="text-left">Item Code</th>
 				<th class="text-left">Item Description</th>
 				<th style="width:80px;">Qty </th>
-				<th style="width:80px;">Approx Weight</th>
+				<th style="width:80px;">Qty opt.</th>
 				<th style="width:80px;">Rate</th>
 				<th style="width:75px;">Rate Unit</th>
 				<th style="width:110px;">Amount</th>
@@ -54,8 +54,8 @@
 							echo '<td rowspan="2" class="text-center">'.$i++.'</td>';
 							echo '<td>'.$row->item_code.'</td>';
 							echo '<td>'.$row->item_name.'</td>';
-							echo '<td class="text-right">'.sprintf('%0.2f',$row->qty).'</td>';
-							echo '<td class="text-right">'.sprintf('%0.2f',$row->qty_kg).'</td>';
+							echo '<td class="text-right">'.sprintf('%0.2f',$row->qty).(!empty($row->unit_name) ? ' <label>('. $row->unit_name.')</label>' : '').'</td>';
+							echo '<td class="text-right">'.sprintf('%0.2f',$row->qty_kg).(!empty($row->optional_unit_name) ? ' <label>('. $row->optional_unit_name.')</label>' : '').'</td>';
 							echo '<td class="text-right">'.sprintf('%0.2f',$row->price).'</td>';
 							echo '<td class="text-center">'.$row->unit_name.'</td>';
 							echo '<td rowspan="2" class="text-right">'.$row->amount.'</td>';

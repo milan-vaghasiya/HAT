@@ -82,6 +82,7 @@ $(document).ready(function(){
 			$("#hsn_code").val(itemData.hsn_code);
 			$("#item_gst").val(itemData.gst_per);
 			$("#price").val(itemData.price);
+			$("#item_price").val(itemData.price);
 			$("#unit_name").val(itemData.unit_name);
 			$("#unit_id").val(itemData.unit_id);		
 			$.ajax({
@@ -133,6 +134,7 @@ $(document).ready(function(){
         $.each(fd,function(i, v) {
             formData[v.name] = v.value;
         });
+
         $(".item_id").html("");
 		$(".qty").html("");
 		$(".price").html("");
@@ -145,7 +147,10 @@ $(document).ready(function(){
 		}
 		if(formData.rate_unit == 2){
 			if(formData.qty_kg == "" || formData.qty_kg == "0"){
-				$(".qty_kg").html("Qty K.G is required."); Valid=0;
+				$(".qty_kg").html("Qty is required."); Valid=0;
+			}
+			if(formData.optional_unit_id == "" || formData.optional_unit_id == "0"){
+				$(".optional_unit_id").html("Unit is required."); Valid=0;
 			}
 		}
 
@@ -198,6 +203,7 @@ $(document).ready(function(){
                     formData.disc_amt = disc_amt;
                     formData.amount = amount;
                     formData.net_amount = net_amount;
+                    formData.optional_unit = $('#optional_unit_id option:selected').text();
 					
 					AddRow(formData);
                     $('#orderItemForm')[0].reset();
@@ -325,7 +331,11 @@ function AddRow(data) {
 	cell.append(fgItemNameInput);
 	cell.append(wo_noInput);
 		
-	
+	var optionalUnitIdInput = $("<input/>",{type:"hidden",name:"optional_unit_id[]",value:data.optional_unit_id});
+	cell = $(row.insertCell(-1));
+	cell.html(data.optional_unit);
+	cell.append(optionalUnitIdInput);
+
 	var rateUnitInput = $("<input/>",{type:"hidden",name:"rate_unit[]",value:data.rate_unit});
 	var priceInput = $("<input/>",{type:"hidden",name:"price[]",value:data.price});
 	cell = $(row.insertCell(-1));

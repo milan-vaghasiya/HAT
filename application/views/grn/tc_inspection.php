@@ -73,7 +73,7 @@
                                         <input type="hidden" name="min_value[]" id="min_1<?= $i ?>" value="<?=(!empty($row->min_value))?$row->min_value:""; ?>" />
                                         <input type="hidden" name="max_value[]" id="max_1<?= $i ?>" value="<?=(!empty($row->max_value))?$row->max_value:""; ?>" />
                                         <input type="text" name="result[]" class="form-control floatOnly checkResult" data-rowid="1<?=$i?>" value="<?=(!empty($row->result))?$row->result:""; ?>" placeholder="Result" />
-                                    </div><br>
+                                    </div>
                                     <div class="error 1<?=$i?>"></div>
                                 </td>
                             <?php       $i++;
@@ -114,7 +114,7 @@
                                         <input type="hidden" name="min_value[]" id="min_2<?= $i ?>" value="<?=(!empty($row->min_value))?$row->min_value:""; ?>" />
                                         <input type="hidden" name="max_value[]" id="max_2<?= $i ?>" value="<?=(!empty($row->max_value))?$row->max_value:""; ?>" />
                                         <input type="text" name="result[]" class="form-control floatOnly checkResult" data-rowid="2<?=$i?>" value="<?=(!empty($row->result))?$row->result:""; ?>" placeholder="Result" />
-                                    </div><br>
+                                    </div>
                                     <div class="error 2<?=$i?>"></div>
                                 </td>
                             <?php       $i++;
@@ -155,7 +155,7 @@
                                         <input type="hidden" name="sub_param[]" value="<?=(!empty($row->sub_param))?$row->sub_param:""; ?>" />
                                         <input type="hidden" name="min_value[]" id="min_3<?= $i ?>" value="<?=(!empty($row->min_value))?$row->min_value:""; ?>" />
                                         <input type="hidden" name="max_value[]" id="max_3<?= $i ?>"value="<?=(!empty($row->max_value))?$row->max_value:""; ?>" />
-                                        <input type="text" name="result[]" class="form-control floatOnly checkResult" data-rowid="3<?=$i?>" value="<?=(!empty($row->result))?$row->result:""; ?>" placeholder="Result" />
+                                        <input type="text" name="result[]" class="form-control checkResult" data-rowid="3<?=$i?>" value="<?=(!empty($row->result))?$row->result:""; ?>" placeholder="Result" />
                                     </div><br>
                                     <div class="error 3<?=$i?>"></div>
                                 </td>

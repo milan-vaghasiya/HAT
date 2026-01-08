@@ -161,6 +161,7 @@ class PurchaseOrder extends MY_Controller{
 				'item_id' => $data['item_id'],
 				'item_type' => $data['item_type'],
 				'unit_id' => $data['unit_id'],
+				'optional_unit_id' => $data['optional_unit_id'] ?? 0,
 				'fgitem_id' => $data['fgitem_id'],
                 'fgitem_name' => $data['fgitem_name'],
                 'wo_no' => $data['wo_no'],
@@ -183,6 +184,7 @@ class PurchaseOrder extends MY_Controller{
 				'item_remark' => $data['item_remark'],
                 'created_by' => $this->session->userdata('loginId')
 			];
+
 			$this->printJson($this->purchaseOrder->save($masterData,$itemData));
 		endif;
     }

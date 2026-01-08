@@ -59,11 +59,12 @@ class PurchaseOrderModel extends MasterModel{
 	
 	public function getPurchaseOrderTransactions($id){
         $data['tableName'] = $this->purchaseOrderTrans;
-        $data['select'] = "purchase_order_trans.*,item_master.item_name,item_master.item_code,unit_master.unit_name,fg_master.make_brand,die_master.material_grade,item_master.item_image,die_master.item_code as die_no,die_master.item_name as pin_dia";
+        $data['select'] = "purchase_order_trans.*,item_master.item_name,item_master.item_code,unit_master.unit_name,fg_master.make_brand,die_master.material_grade,item_master.item_image,die_master.item_code as die_no,die_master.item_name as pin_dia,um.unit_name as optional_unit_name";
         $data['leftJoin']['item_master'] = "item_master.id = purchase_order_trans.item_id";
 		$data['leftJoin']['item_master as die_master'] = "die_master.id = item_master.part_no";
 		$data['leftJoin']['item_master as fg_master'] = "fg_master.item_code = item_master.item_code";
         $data['leftJoin']['unit_master'] = "unit_master.id = item_master.unit_id";
+        $data['leftJoin']['unit_master um'] = "um.id = purchase_order_trans.optional_unit_id";
         $data['where']['purchase_order_trans.order_id'] = $id;
 		$data['group_by'][] = 'purchase_order_trans.id';
         return $this->rows($data);
@@ -151,6 +152,7 @@ class PurchaseOrderModel extends MasterModel{
 									'item_id' => $value,
 									'item_type' => $itemData['item_type'][$key],
 									'unit_id' => $itemData['unit_id'][$key],
+									'optional_unit_id' => $itemData['optional_unit_id'][$key],
 									'fgitem_id' => $itemData['fgitem_id'][$key],
 									'fgitem_name' => $itemData['fgitem_name'][$key],
 									'wo_no' => $itemData['wo_no'][$key],

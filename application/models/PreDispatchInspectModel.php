@@ -118,5 +118,23 @@ class PreDispatchInspectModel extends MasterModel{
 			$data['where']['job_card.product_id'] = $item_id;
 		return $this->rows($data);
 	}
+
+    public function pendingPdiItemList($data){
+        $queryData['tableName'] = "trans_child";
+        $queryData['select'] = 'trans_child.id as trans_child_id,trans_child.item_id,trans_child.item_name,item_master.item_code,trans_child.trans_main_id,trans_main.trans_number';
+        $queryData['leftJoin']['item_master'] = "item_master.id = trans_child.item_id";
+        $queryData['leftJoin']['trans_main'] = "trans_main.id = trans_child.trans_main_id";
+
+        if(!empty($data['item_id'])){$queryData['where']['trans_child.item_id'] = $data['item_id'];}
+        if(!empty($data['trans_child_id'])){$queryData['where']['trans_child.id'] = $data['trans_child_id'];}
+        $queryData['where']['trans_child.trans_status'] = 0;
+        $queryData['group_by'][] = 'trans_main.id';
+
+        if(!empty($data['single_row'])){
+            return $this->row($queryData);
+        }else{
+            return $this->rows($queryData);
+        }
+    }
 }
 ?>

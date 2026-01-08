@@ -434,6 +434,7 @@ function Edit(data,button){
 	
 	$("#item_id").comboSelect();
 	$("#item_type").comboSelect();
+	$("#optional_unit_id").comboSelect();
 	$.ajax({
 		url:base_url + '/grn/setFGItems',
 		method:"POST",

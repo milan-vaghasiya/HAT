@@ -1,4 +1,4 @@
-<form>
+<form enctype="multipart/form-data">
     <div class="col-md-12">
         <div class="error generalError"></div>
         <div class="row">
@@ -8,28 +8,6 @@
             <input type="hidden" id="old_trans_id" value="" />
 			<input type="hidden" name="type" value="<?=$type?>" />
 
-            <?php if($type == 1): ?>
-				<div class="col-md-2 form-group">
-					<label for="ref_tc_no">TC No.</label>
-					<select name="reftc" id="reftc" class="form-control single-select">
-						<option value="0">Select TC No.</option>
-						<option value="-1">New Certificate</option>
-						<?php
-							if(!empty($tclist)):
-								foreach($tclist as $row):
-									if(!empty($row->ref_tc_no)):
-										echo '<option value="'.$row->ref_tc_no.'" data-old_trans_id="'.$row->grn_trans_id.'">'.$row->ref_tc_no.' ('.$row->batch_no.')</option>';
-									endif;
-								endforeach;
-							endif;
-						?>
-					</select>
-				</div>  
-            <?php endif; ?>
-            <div class="col-md-2 form-group">
-                <label for="ref_tc_no">New TC No.</label>
-                <input type="text" id="ref_tc_no" name="ref_tc_no" class="form-control req" value="<?=(!empty($gateReceipt->tc_no))?$gateReceipt->tc_no:""; ?>" readonly />
-            </div>
             <div class="col-md-2 form-group">
                 <label for="batch_no">Batch/Heat No.</label>
                 <input type="text" id="batch_no" name="batch_no" class="form-control" value="<?=(!empty($gateReceipt->batch_no))?$gateReceipt->batch_no:""; ?>" readonly />
@@ -45,6 +23,39 @@
 
             <hr style="width:100%"><div class="col-md-12"><h6>Chemical Composition :</h6></div>
             <div class="col-md-12 form-group">
+                <div class="row">
+                    <?php if($type == 1): ?>
+                        <div class="col-md-2 form-group">
+                            <label for="reftc">TC No.</label>
+                            <select name="reftc" class="form-control single-select reftc" data-type="1">
+                                <option value="0">Select TC No.</option>
+                                <option value="-1">New Certificate</option>
+                                <?php
+                                    if(!empty($tclist)):
+                                        foreach($tclist as $row):
+                                            if(!empty($row->ref_tc_no)):
+                                                echo '<option value="'.$row->ref_tc_no.'" data-old_trans_id="'.$row->grn_trans_id.'">'.$row->ref_tc_no.' ('.$row->batch_no.')</option>';
+                                            endif;
+                                        endforeach;
+                                    endif;
+                                ?>
+                            </select>
+                        </div>  
+                    <?php endif; ?>
+                    <div class="col-md-2 form-group">
+                        <label for="ref_tc_no">New TC No.</label>
+                        <input type="text" id="ref_tc_no" name="ref_tc_no" class="form-control req ref_tc_number" value="<?=(!empty($gateReceipt->tc_no))?$gateReceipt->tc_no:""; ?>" readonly />
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label for="ref_tc_date">TC Date</label>
+                        <input type="date" id="ref_tc_date" class="form-control" value="<?=(!empty($dataRow->ref_tc_date))?$dataRow->ref_tc_date:""; ?>"/>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label for="ref_tc_certificate">Certificate </label>
+                        <input type="file" id="ref_tc_certificate" class="form-control"/>
+                    </div>
+                </div>
+
                 <table class="table table-bordered">
                     <thead class="thead-info">
                         <tr class="text-center">
@@ -85,7 +96,40 @@
                 </table>
             </div>
             <hr style="width:100%"><div class="col-md-12"><h5>Mechanical Properties :</h5></div>
-            <div class="col-md-8 form-group">
+            <div class="col-md-12 form-group">
+                <div class="row">
+                    <?php if($type == 1): ?>
+                        <div class="col-md-2 form-group">
+                            <label for="reftc_mech">TC No.</label>
+                            <select name="reftc_mech" class="form-control single-select reftc" data-type="2">
+                                <option value="0">Select TC No.</option>
+                                <option value="-1">New Certificate</option>
+                                <?php
+                                    if(!empty($tclist)):
+                                        foreach($tclist as $row):
+                                            if(!empty($row->ref_tc_no)):
+                                                echo '<option value="'.$row->ref_tc_no.'" data-old_trans_id="'.$row->grn_trans_id.'">'.$row->ref_tc_no.' ('.$row->batch_no.')</option>';
+                                            endif;
+                                        endforeach;
+                                    endif;
+                                ?>
+                            </select>
+                        </div>  
+                    <?php endif; ?>
+                    <div class="col-md-2 form-group">
+                        <label for="ref_tc_no_mech">New TC No.</label>
+                        <input type="text" id="ref_tc_no_mech" name="ref_tc_no_mech" class="form-control req ref_tc_number" value="<?=(!empty($gateReceipt->tc_no))?$gateReceipt->tc_no:""; ?>" readonly />
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label for="ref_tc_date">TC Date</label>
+                        <input type="date" id="ref_tc_date" class="form-control" value="<?=(!empty($dataRow->ref_tc_date))?$dataRow->ref_tc_date:""; ?>"/>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label for="ref_tc_certificate">Certificate </label>
+                        <input type="file" id="ref_tc_certificate" class="form-control"/>
+                    </div>
+                </div>
+
                 <table class="table table-bordered">
                     <thead class="thead-info">
                         <tr class="text-center">
@@ -127,7 +171,42 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-md-4 form-group">
+            <hr style="width:100%">
+
+            <div class="col-md-6 form-group">
+                <div class="row">
+                    <?php if($type == 1): ?>
+                        <div class="col-md-3 form-group">
+                            <label for="ref_tc_no">TC No.</label>
+                            <select name="reftc_hardnesh" class="form-control single-select reftc" data-type="3">
+                                <option value="0">Select TC No.</option>
+                                <option value="-1">New Certificate</option>
+                                <?php
+                                    if(!empty($tclist)):
+                                        foreach($tclist as $row):
+                                            if(!empty($row->ref_tc_no)):
+                                                echo '<option value="'.$row->ref_tc_no.'" data-old_trans_id="'.$row->grn_trans_id.'">'.$row->ref_tc_no.' ('.$row->batch_no.')</option>';
+                                            endif;
+                                        endforeach;
+                                    endif;
+                                ?>
+                            </select>
+                        </div>  
+                    <?php endif; ?>
+                    <div class="col-md-3 form-group">
+                        <label for="ref_tc_no_hardnesh">New TC No.</label>
+                        <input type="text" name="ref_tc_no_hardnesh" class="form-control req ref_tc_number" value="<?=(!empty($gateReceipt->ref_tc_no_hardnesh))?$gateReceipt->ref_tc_no_hardnesh:""; ?>" readonly />
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="ref_tc_date_hardnesh">TC Date</label>
+                        <input type="date" id="ref_tc_date_hardnesh" class="form-control" value="<?=(!empty($dataRow->ref_tc_date_hardnesh))?$dataRow->ref_tc_date_hardnesh:""; ?>"/>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="ref_tc_certificate">Certificate </label>
+                        <input type="file" id="ref_tc_certificate" class="form-control"/>
+                    </div>
+                </div>
+
                 <table class="table table-bordered">
                     <thead class="thead-info">
                         <tr class="text-center">
@@ -173,20 +252,22 @@
 
 <script>
 $(document).ready(function(){
-    $(document).on('change keyup',"#reftc",function(){
+    $(document).on('change keyup',".reftc",function(){
         var reftc = $(this).val();
+        var type = $(this).attr('data-type');
         var grade_id = $('#grade_id').val();
         
-        var old_trans_id = $('#reftc :selected').data('old_trans_id');
-        $('#old_trans_id').val(old_trans_id);
+        // var old_trans_id = $('.reftc :selected').data('old_trans_id');
+        // $('#old_trans_id').val(old_trans_id);
+        let corrent = $(this).closest('.form-group').next('div').find('.ref_tc_number');
+        corrent.val('');
 
-        $('#ref_tc_no').val('');
         if(reftc == -1){
-            $("#ref_tc_no").removeAttr("readonly");
-            $('#ref_tc_no').val();
+            corrent.removeAttr("readonly");
+            corrent.val();
         }else{
-            $("#ref_tc_no").attr("readonly", "readonly");
-            $('#ref_tc_no').val(reftc);
+            corrent.attr("readonly", "readonly");
+            corrent.val(reftc);
             if(reftc != 0){
                 $.ajax({
                     url:base_url + controller + '/getTcParamByTcNo',
@@ -194,14 +275,18 @@ $(document).ready(function(){
                     data:{grade_id:grade_id,tc_no:reftc},
                     dataType:'json',
                     success:function(data){
-                        $("#chemBody").html("");
-                        $("#chemBody").html(data.chemBody);
-                        
-                        $("#mechBody").html("");
-                        $("#mechBody").html(data.mechBody);
-                        
-                        $("#hardBody").html("");
-                        $("#hardBody").html(data.hardBody);
+                        if(type == 1){
+                            $("#chemBody").html("");
+                            $("#chemBody").html(data.chemBody);
+                        }
+                        else if(type == 2){
+                            $("#mechBody").html("");
+                            $("#mechBody").html(data.mechBody);
+                        }
+                        else if(type == 3){
+                            $("#hardBody").html("");
+                            $("#hardBody").html(data.hardBody);
+                        }
                     }
                 });
             }

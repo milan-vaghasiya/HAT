@@ -5,15 +5,24 @@
             <input type="hidden" name="item_type" value="<?=(!empty($dataRow->item_type))?$dataRow->item_type:$item_type; ?>" />
             <input type="hidden" name="opening_qty" class="form-control floatOnly" min="0" value="<?=(!empty($dataRow->opening_qty))?$dataRow->opening_qty:"0"?>" />
 
-        
             <div class="col-md-3 form-group">
                 <label for="item_code">Item Code</label>
-                <select name="item_code" id="item_code" class="form-control single-select req">
-                    <option value="0">Select</option>
+				<input type="text" name="item_code" class="form-control req" value="<?=(!empty($dataRow->item_code)) ? $dataRow->item_code : ""?>" />
+            </div>
+
+            <div class="col-md-9 form-group" id="item_div">
+                <label for="item_name">Item Name</label>
+				<input type="text" name="item_name" class="form-control req" value="<?=(!empty($dataRow->item_name)) ? $dataRow->item_name : ""?>" />
+            </div>
+
+            <div class="col-md-3 form-group">
+                <label for="fg_id">Finish goods</label>
+                <select name="fg_id" id="fg_id" class="form-control single-select req">
+                    <option value="0">Select Item</option>
                     <?php
 						foreach ($fgCodeList as $row) :
-                            $selected = (!empty($dataRow->item_code) && $dataRow->item_code == $row->item_code) ? "selected" : "";
-                            echo '<option value="' . $row->item_code . '" data-item_id="' . $row->id . '"' . $selected . '>'.$row->item_code.' </option>';
+                            $selected = (!empty($dataRow->fg_id) && $dataRow->fg_id == $row->id) ? "selected" : "";
+                            echo '<option value="' . $row->id . '" ' . $selected . '>'.(!empty($row->item_code) ? '['.$row->item_code.'] '.$row->item_name : '').' </option>';
                         endforeach;
                     ?>
                 </select>
@@ -21,15 +30,10 @@
             <?php 
                 $itmtp = (!empty($dataRow->item_type))?$dataRow->item_type:$item_type;  
             ?>
-         
-            <div class="col-md-9 form-group" id="item_div">
-                <label for="item_name">Item Name</label>
-				<input type="text" name="item_name" class="form-control req" value="<?=(!empty($dataRow->item_name)) ? $dataRow->item_name : ""?>" />
-            </div>
 
             <div class="col-md-3 form-group">
                 <label for="part_no">Die</label>
-                <select name="part_no" id="part_no" class="form-control single-select req">
+                <select name="part_no" id="part_no" class="form-control single-select">
                     <option value="0">Select Die</option>
                     <?php
 						echo $dieOptions;
@@ -76,7 +80,7 @@
                 </select>
             </div>
             
-            <div class="col-md-4 form-group">
+            <div class="col-md-6 form-group">
                 <label for="hsn_code">HSN Code</label>
                 <select name="hsn_code" id="hsn_code" class="form-control single-select">
                     <option value="">Select HSN Code</option>
@@ -88,7 +92,7 @@
                     ?>
                 </select>
             </div>
-            <div class="col-md-4 form-group">
+            <div class="col-md-3 form-group">
                 <label for="gst_per">GST %.</label>
                 <select name="gst_per" id="gst_per" class="form-control single-select">
                     <?php
@@ -99,7 +103,7 @@
                     ?>
                 </select>
             </div>
-            <div class="col-md-4 form-group">
+            <div class="col-md-3 form-group">
                 <label for="wt_pcs">Weight Per Pcs.</label>
                 <input type="text" name="wt_pcs" class="form-control floatOnly" value="<?=(!empty($dataRow->wt_pcs))?$dataRow->wt_pcs:""?>" />
             </div>
@@ -114,7 +118,7 @@
                 <input type="hidden" name="material_grade" id="material_grade" value="<?= (!empty($dataRow->material_grade)) ? $dataRow->material_grade : "" ?>">
             <?php endif; ?>
             
-			<div class="col-md-12 form-group">
+			<div class="col-md-9 form-group">
                 <label for="description">Remark</label>
                 <input type="text" name="description" class="form-control" value="<?= (!empty($dataRow->description)) ? $dataRow->description : "" ?>" />
             </div>
@@ -133,14 +137,14 @@
             $("#material_grade_id").val(grade_id);
         });
 
-        $(document).on('change','#item_code',function(){
-            var item_code = $(this).val();
-            var item_id = $("#item_code :selected").data('item_id');
-            if(item_code){
+        $(document).on('change','#fg_id',function(){
+            var fg_id = $(this).val();
+            var part_no = '<?= !empty($dataRow->part_no) ? $dataRow->part_no : '';?>';
+            if(fg_id){
                 $.ajax({
                     url:base_url + controller + '/getDieListForSelect',
                     type:'post',
-                    data:{item_code:item_code, item_id:item_id},
+                    data:{item_id:fg_id,part_no:part_no},
                     dataType:'json',
                     success:function(data){
                         $("#part_no").html("");
@@ -149,10 +153,13 @@
                     }
                 });
             } else {
-                $("#part_no").html("<option value=''>Select Item Name</option>");
+                $("#part_no").html("<option value=''>Select Die</option>");
                 $("#part_no").comboSelect();
             }
         });
+        if($('#id').val() != ''){
+            $('#fg_id').trigger('change');
+        }
 	});
     
 </script>

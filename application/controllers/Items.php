@@ -85,6 +85,8 @@ class Items extends MY_Controller
 				$errorMessage['material_grade_id'] = "Grade is required.";
 			if(empty($data['item_code']))
 				$errorMessage['item_code'] = "Item Code is required.";
+            if(empty($data['fg_id']))
+				$errorMessage['fg_id'] = "Item is required.";
 		}else{
 			if(empty($data['item_name']))
 				$errorMessage['item_name'] = "Item Name is required.";
